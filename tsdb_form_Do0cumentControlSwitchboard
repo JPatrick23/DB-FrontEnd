@@ -1,0 +1,728 @@
+Option Compare Database
+
+Private Sub cmdOpenClientAuditUpdateForm_Click()
+'Attached to On Click event of cmdOpenClientAuditUpdateForm
+
+    Dim strPasswd
+
+    strPasswd = InputBox("Enter Password to Access This Form:", "Restricted Form")
+
+    'Check to see if there is any entry made to input box, or if
+    'cancel button is pressed. If no entry made then exit sub.
+
+    If strPasswd = "" Or strPasswd = Empty Then
+        MsgBox "You Must Enter a Password to Access this Form.", vbInformation, "Required Data"
+        Exit Sub
+    End If
+
+    'If correct password is entered open  form
+    'If incorrect password entered give message and exit sub
+
+    If strPasswd = "audittrack" Then
+        DoCmd.OpenForm "ClientAuditUpdate_Form", acNormal
+    Else
+        MsgBox "Incorrect Password Entered.", _
+               vbOKOnly, "Important Information"
+        Exit Sub
+    End If
+
+End Sub
+
+Private Sub Command32_Click()
+
+End Sub
+
+Private Sub cmdOpenRegulatoryAuditUpdateForm_Click()
+
+'Attached to On Click event of cmdOpenRegulatoryAuditUpdateForm
+
+    Dim strPasswd
+
+    strPasswd = InputBox("Enter Password to Access This Form:", "Restricted Form")
+
+    'Check to see if there is any entry made to input box, or if
+    'cancel button is pressed. If no entry made then exit sub.
+
+    If strPasswd = "" Or strPasswd = Empty Then
+        MsgBox "You Must Enter a Password to Access this Form.", vbInformation, "Required Data"
+        Exit Sub
+    End If
+
+    'If correct password is entered open  form
+    'If incorrect password entered give message and exit sub
+
+    If strPasswd = "audittrack" Then
+        DoCmd.OpenForm "RegulatoryAgencyAuditUpdate_Form", acNormal
+    Else
+        MsgBox "Incorrect Password Entered.", _
+               vbOKOnly, "Important Information"
+        Exit Sub
+    End If
+
+End Sub
+
+Private Sub Command100_Click()
+On Error GoTo Command100_Click_Err
+    DoCmd.OutputTo acQuery, "ExtractOpenCAPAActionItems_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command100_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command102_Click()
+On Error GoTo Command102_Click_Err
+    DoCmd.OutputTo acQuery, "ExtractOpenNCEActionItemVerification_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command102_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command104_Click()
+On Error GoTo Command104_Click_Err
+    DoCmd.OutputTo acQuery, "ExtractOpenCAPAActionItemsVerification_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command104_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command108_Click()
+On Error GoTo Command108_Click_Err
+    DoCmd.OutputTo acQuery, "ExtractFullNCEReport_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command108_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command111_Click()
+On Error GoTo Command111_Click_Err
+    DoCmd.OutputTo acQuery, "ExtractFullLIRReport_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command111_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command114_Click()
+On Error GoTo Command114_Click_Err
+    DoCmd.OutputTo acQuery, "ExtractFullCAPAReport_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command114_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command116_Click()
+On Error GoTo Command116_Click_Err
+    DoCmd.OutputTo acQuery, "ExtractCancelledCAPA_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command116_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command120_Click()
+On Error GoTo Command120_Click_Err
+    DoCmd.OutputTo acQuery, "ExtractOpenLIRActionItemVerification_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command120_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command127_Click()
+DoCmd.Close
+DoCmd.OpenForm "AddNewClient3_Form"
+End Sub
+
+Private Sub Command128_Click()
+DoCmd.Close
+DoCmd.OpenForm "AddNewPrefix_Form"
+End Sub
+
+Private Sub Command129_Click()
+DoCmd.Close
+DoCmd.OpenForm "AddNewProtocol_Form"
+End Sub
+
+Private Sub Command130_Click()
+DoCmd.OpenForm "AddNewDepartment_Form"
+End Sub
+
+Private Sub Command131_Click()
+DoCmd.OpenForm "AddNewJobTitle_Form"
+End Sub
+
+Private Sub Command132_Click()
+On Error GoTo Command132_Click_Err
+DoCmd.OpenReport "ArchiveLoanLog_Report", acPrintReport
+    Exit Sub
+
+Command132_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command135_Click()
+DoCmd.OpenForm "CHangeControlInitiation_Form"
+End Sub
+
+Private Sub Command138_Click()
+On Error GoTo Command138_Click_Err
+    DoCmd.OutputTo acQuery, "OpenChangeControl_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command138_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command140_Click()
+On Error GoTo Command140_Click_Err
+    DoCmd.OutputTo acQuery, "OpenVerificationChangeControl_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command140_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command149_Click()
+On Error GoTo Command149_Click_Err
+    DoCmd.OutputTo acQuery, "DevInvSacSearch_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command149_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command179_Click()
+On Error GoTo Command179_Click_Err
+    DoCmd.OutputTo acQuery, "OldSystemCAPASearch_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command179_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command18_Click()
+DoCmd.OpenForm "UpdateEmployeeStatus_Form"
+End Sub
+
+Private Sub Command19_Click()
+DoCmd.OpenForm "DCR_Form"
+End Sub
+
+Private Sub Command2_Click()
+DoCmd.OpenForm "EnterNewEmployee_Form"
+End Sub
+
+Private Sub Command20_Click()
+
+On Error GoTo Command20_Click_Err
+   DoCmd.OpenReport "InitialSpecializedTrainingModule_Report", acViewReport
+    Exit Sub
+
+Command20_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+
+
+End Sub
+
+Private Sub Command208_Click()
+On Error GoTo Command208_Click_Err
+    DoCmd.OutputTo acQuery, "OpenChangeControlImplementationPlan_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command208_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command210_Click()
+On Error GoTo Command210_Click_Err
+DoCmd.OpenReport "ChangeControlLog_Report", acPrintReport
+ Exit Sub
+
+Command210_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+
+
+Private Sub Command213_Click()
+On Error GoTo Command213_Click_Err
+   DoCmd.OpenReport "InitialCC3MANCoreTrainingModule_Report", acViewReport
+    Exit Sub
+
+Command213_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command214_Click()
+On Error GoTo Command214_Click_Err
+   DoCmd.OpenReport "InitialLG1MANCoreTrainingModule_Report", acViewReport
+    Exit Sub
+
+Command214_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command22_Click()
+DoCmd.OpenForm "AddtoModule_Form"
+End Sub
+
+Private Sub Command222_Click()
+On Error GoTo Command222_Click_Err
+   DoCmd.OpenReport "InitialMANCoreTrainingModule_Report", acViewReport
+    Exit Sub
+
+Command222_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command226_Click()
+On Error GoTo Command226_Click_Err
+   DoCmd.OpenReport "SS_IND_Report", acViewReport
+    Exit Sub
+
+Command226_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+
+End Sub
+
+Private Sub Command227_Click()
+On Error GoTo Command227_Click_Err
+   DoCmd.OpenReport "SS_IND_Gene_Report", acViewReport
+    Exit Sub
+
+Command227_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command228_Click()
+On Error GoTo Command228_Click_Err
+   DoCmd.OpenReport "SS_IND_NonGene_Report", acViewReport
+    Exit Sub
+
+Command228_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command231_Click()
+On Error GoTo Command231_Click_Err
+    DoCmd.OutputTo acQuery, "ChangeControlFullExtract_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command231_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command235_Click()
+On Error GoTo Command235_Click_Err
+    DoCmd.OutputTo acQuery, "ALLArchivedExtract_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command235_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command28_Click()
+DoCmd.OpenForm "ArchiveLookUp_Form"
+End Sub
+
+Private Sub Command29_Click()
+DoCmd.OpenForm "ArchiveRecordEntry_Form"
+End Sub
+
+
+
+
+
+Private Sub Command35_Click()
+DoCmd.Close
+DoCmd.OpenForm "Login_Form"
+End Sub
+
+Private Sub Command41_Click()
+DoCmd.OpenForm "NCEInitiation_Form"
+End Sub
+
+Private Sub Command44_Click()
+DoCmd.OpenForm "CAPAInitiation_Form"
+End Sub
+
+Private Sub Command46_Click()
+DoCmd.OpenForm "SCARInitiation_Form"
+End Sub
+
+Private Sub Command47_Click()
+DoCmd.OpenForm "LIRInitiation_Form"
+End Sub
+
+Private Sub Command49_Click()
+On Error GoTo Command49_Click_Err
+    DoCmd.OutputTo acQuery, "OutstandingArchiveLoanStatus_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command49_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command59_Click()
+On Error GoTo Command59_Click_Err
+    DoCmd.OutputTo acQuery, "NCEIssuedbyDate_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command59_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command61_Click()
+On Error GoTo Command61_Click_Err
+    DoCmd.OutputTo acQuery, "NCEClosedbyDate_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command61_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command63_Click()
+On Error GoTo Command63_Click_Err
+    DoCmd.OutputTo acQuery, "ExtractOPenNCEs_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command63_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command65_Click()
+On Error GoTo Command65_Click_Err
+    DoCmd.OutputTo acQuery, "ExtractCancelledNCEs_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command65_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command73_Click()
+On Error GoTo Command73_Click_Err
+   DoCmd.OpenReport "MasterSOPList_Report", acViewReport
+    Exit Sub
+
+Command73_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+
+
+
+
+End Sub
+
+Private Sub Command76_Click()
+On Error GoTo Command76_Click_Err
+    DoCmd.OutputTo acQuery, "ExtractOpenNCEActionItem_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command76_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command78_Click()
+On Error GoTo Command78_Click_Err
+    DoCmd.OutputTo acQuery, "LIRIssuedbyDate_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command78_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command79_Click()
+On Error GoTo Command79_Click_Err
+    DoCmd.OutputTo acQuery, "LIRClosurebyDateRange_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command79_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command80_Click()
+On Error GoTo Command84_Click_Err
+    DoCmd.OutputTo acQuery, "ExtractOpenLIRs_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command84_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command82_Click()
+On Error GoTo Command82_Click_Err
+    DoCmd.OutputTo acQuery, "ExtractCancelledLIRs_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command82_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+
+End Sub
+
+Private Sub Command9_Click()
+DoCmd.Quit
+End Sub
+
+Private Sub Command93_Click()
+On Error GoTo Command93_Click_Err
+    DoCmd.OutputTo acQuery, "CAPAIssuedbyDateRange_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command93_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command95_Click()
+On Error GoTo Command95_Click_Err
+    DoCmd.OutputTo acQuery, "CAPAClosedbyDateRange_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command95_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command96_Click()
+On Error GoTo Command96_Click_Err
+    DoCmd.OutputTo acQuery, "ExtractOpenCAPA_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command96_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command97_Click()
+On Error GoTo Command97_Click_Err
+    DoCmd.OutputTo acQuery, "ExtractOpenLIRActionItems_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command97_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Export_LIR_Root_Cause_Click()
+On Error GoTo ExportLIRRootCause_Click_Err
+    DoCmd.OutputTo acQuery, "LIRRootCause_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+ExportLIRRootCause_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+
+End Sub
+
+Private Sub Extract_NCE_Root_Cause_by_Date_Range_Click()
+On Error GoTo Extract_NCE_Root_Cause_by_Date_Range_Click_Err
+    DoCmd.OutputTo acQuery, "NCERootCause_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Extract_NCE_Root_Cause_by_Date_Range_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub

@@ -1,0 +1,23 @@
+Option Compare Database
+
+Private Sub CloseDCRForm_Click()
+
+End Sub
+
+Private Sub Command33_Click()
+DoCmd.OpenForm "AddNewProtocol_Form"
+End Sub
+
+Private Sub Command36_Click()
+DoCmd.Close
+End Sub
+
+Private Sub Form_Error(DataErr As Integer, Response As Integer)
+If DataErr = 2237 Then
+   Response = acDataErrContinue
+   MsgBox "The number you have selected is not available.  To include a number in this drop down list, you must first enter it into the system by clicking on the Add New Number button.", vbOKOnly, "Not a Selectable Data Type"
+   lstNumber = ""
+   Exit Sub
+End If
+
+End Sub

@@ -1,0 +1,22 @@
+Option Compare Database
+
+Private Sub Command11_Click()
+DoCmd.Close
+End Sub
+
+Private Sub Form_Error(DataErr As Integer, Response As Integer)
+If DataErr = 2237 Then
+   Response = acDataErrContinue
+   MsgBox "The information you have selected or entered is not available.  You must first close this form, and then add a new Client or Regulatory Agency by clicking on the New Audit Set Up button located on the HUB form.", vbOKOnly, "Not a Selectable Data Type"
+   lstNumber = ""
+   Exit Sub
+End If
+End Sub
+
+Private Sub lstAuditStartDate_AfterUpdate()
+[lastObservationNumberUsed_Form].Requery
+End Sub
+
+Private Sub lstClient_AfterUpdate()
+[lastObservationNumberUsed_Form].Requery
+End Sub

@@ -1,0 +1,463 @@
+Private Sub ClosureDate_BeforeUpdate(Cancel As Integer)
+If ClosureDate < DateInitiated Then
+MsgBox "The Closure Date cannot be prior to the Date Initiated."
+Cancel = True
+
+Else
+
+If DateCancelled <> "" Then
+MsgBox "You cannot enter the Closure Date since the Date Cancelled has already been entered."
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([DateInitiated]) Then
+MsgBox "You cannot close out this Change Control until you have entered the Date Initiated."
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([TargetCompletionDate]) Then
+MsgBox "You cannot close out this Change Control until you have entered the Target Completion Date."
+Cancel = True
+Me.Undo
+
+
+Else
+
+If IsNull([Department]) Then
+MsgBox "You cannot close out this Change Control until you have entered the Department associated with this Change Control."
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([Initiator]) Then
+MsgBox "You cannot close out this Change Control until you have entered the Initiator of the Change Control."
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([Title]) Then
+MsgBox "You cannot close out this Change Control until you have entered the Title for the Change Control."
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([NewEquipment]) Then
+MsgBox "You cannot close out this Change Control until you have selected either yes or no in the New Equipment field."
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([ComputerizedEquipment]) Then
+MsgBox "You cannot close out this Change Control until you have selected either yes or no in the Computerized Equipment field."
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([TypeofChange]) Then
+MsgBox "You cannot close out this Change Control until you have selected the Type of Change associated with this Change Control."
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([PresentPractice]) Then
+MsgBox "You cannot close out this Change Control until you have entered the Present Practice associated with this Change Control."
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([ProposedChange]) Then
+MsgBox "You cannot close out this Change Control until you have entered the Proposed Change for this Change Control."
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([ChangeCategory]) Then
+MsgBox "You cannot close out this Change Control until you have selected the associated Change Category for this Change Control."
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([OtherChangeCategory]) Then
+MsgBox "The Other Change Category field has been left blank.  You cannot close this record out until you enter information into this field.  If Non-Appplicable, type N/A."
+Cancel = True
+Me.Undo
+
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+
+
+End Sub
+
+
+
+Private Sub Combo161_BeforeUpdate(Cancel As Integer)
+If [Department] = "Manufacturing" Then
+MsgBox "You must select one of the available Manufacturing sub groups."
+Cancel = True
+End If
+End Sub
+
+Private Sub Command198_Click()
+
+
+If DateInitiated > ClosureDate Then
+MsgBox "The Date Initiated cannot be greater than the Date Closed."
+Cancel = True
+
+Else
+
+If IsNull([CancelledBy]) And DateCancelled <> "" Then
+MsgBox "You entered the Date Cancelled; therefore, you must select the individual who cancelled this Change Control."
+Cancel = True
+
+Else
+
+If IsNull([ReasonCancelled]) And DateCancelled <> "" Then
+MsgBox "You entered the Date Cancelled; therefore, you must enter the reason why the Change Control was cancelled."
+Cancel = True
+
+
+Else
+
+If IsNull([DateCancelled]) And ReasonCancelled <> "" Then
+MsgBox "You entered the Reason Cancelled; therefore, you must enter the date the Change Control was cancelled."
+Cancel = True
+
+Else
+
+If IsNull([DateCancelled]) And CancelledBy <> "" Then
+MsgBox "You entered the individual who Cancelled the Change Control; therefore, you must enter the date the Change Control was cancelled."
+Cancel = True
+
+
+Else
+
+If IsNull([CancelledBy]) And ReasonCancelled <> "" Then
+MsgBox "You entered the individual who Cancelled the Change Control; therefore, you must enter the date the Change Control was cancelled."
+Cancel = True
+
+
+
+
+Else
+
+If IsNull([VerificationDue]) And VerificationPlan <> "" Then
+MsgBox "You entered the Verification Plan. You must enter the Verification Due Date."
+Cancel = True
+
+Else
+
+If IsNull([DateInitiated]) And ClosureDate <> "" Then
+MsgBox "You cannot close out this Change Control until you have entered the Date Initiated."
+Cancel = True
+
+
+Else
+
+If IsNull([TargetCompletionDate]) And ClosureDate <> "" Then
+MsgBox "You cannot close out this Change Control until you have entered the Target Completion Date."
+Cancel = True
+
+
+
+Else
+
+If IsNull([Department]) And ClosureDate <> "" Then
+MsgBox "You cannot close out this Change Control until you have entered the Department associated with this Change Control."
+Cancel = True
+
+
+Else
+
+If IsNull([Initiator]) And ClosureDate <> "" Then
+MsgBox "You cannot close out this Change Control until you have entered the Initiator of the Change Control."
+Cancel = True
+
+
+Else
+
+If IsNull([Title]) And ClosureDate <> "" Then
+MsgBox "You cannot close out this Change Control until you have entered the Title for the Change Control."
+Cancel = True
+
+
+Else
+
+If IsNull([NewEquipment]) And ClosureDate <> "" Then
+MsgBox "You cannot close out this Change Control until you have selected either yes or no in the New Equipment field."
+Cancel = True
+
+
+Else
+
+If IsNull([ComputerizedEquipment]) And ClosureDate <> "" Then
+MsgBox "You cannot close out this Change Control until you have selected either yes or no in the Computerized Equipment field."
+Cancel = True
+
+
+Else
+
+If IsNull([TypeofChange]) And ClosureDate <> "" Then
+MsgBox "You cannot close out this Change Control until you have selected the Type of Change associated with this Change Control."
+Cancel = True
+
+
+Else
+
+If IsNull([PresentPractice]) And ClosureDate <> "" Then
+MsgBox "You cannot close out this Change Control until you have entered the Present Practice associated with this Change Control."
+Cancel = True
+
+Else
+
+If IsNull([ProposedChange]) And ClosureDate <> "" Then
+MsgBox "You cannot close out this Change Control until you have entered the Proposed Change for this Change Control."
+Cancel = True
+
+
+Else
+
+If IsNull([ChangeCategory]) And ClosureDate <> "" Then
+MsgBox "You cannot close out this Change Control until you have selected the associated Change Category for this Change Control."
+Cancel = True
+
+
+Else
+
+If IsNull([OtherChangeCategory]) And ClosureDate <> "" Then
+MsgBox "The Other Change Category field has been left blank.  You cannot close this record out until you enter information into this field.  If Non-Appplicable, type N/A."
+Cancel = True
+
+Else
+
+If IsNull([VerificationPlan]) And VerificationDue <> "" Then
+MsgBox "You must fill in the Verifciation Plan field because a Verification Due Date exists."
+Cancel = True
+
+
+
+Else
+
+DoCmd.Close
+
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End Sub
+
+Private Sub DateCancelled_BeforeUpdate(Cancel As Integer)
+If DateCancelled < DateInitiated Then
+MsgBox "The Cancelled Date cannot be prior to the Date Initiated."
+Cancel = True
+
+Else
+
+If ClosureDate <> "" Then
+MsgBox "You cannot enter the Date Cancelled since the Closure Date has already been entered."
+Cancel = True
+Me.Undo
+End If
+End If
+End Sub
+
+
+
+Private Sub DateInitiated_BeforeUpdate(Cancel As Integer)
+If DateInitiated > Date Then
+MsgBox "The Date Initiated cannot be greater than todays date."
+Cancel = True
+
+Else
+
+If DateInitiated > TargetCompletionDate Then
+MsgBox "The Date Initiated cannot be greater than the Target Completion Date."
+Cancel = True
+
+Else
+
+If DateInitiated > ClosureDate Then
+MsgBox "The Date Initiated cannot be greater than the Closure Date."
+Cancel = True
+
+Else
+
+If DateInitiated > DateCancelled Then
+MsgBox "The Date Initiated cannot be greater than the Date Cancelled."
+Cancel = True
+
+Else
+
+If DateInitiated > VerificationDue Then
+MsgBox "The Date Initiated cannot be greater than the Verification Due Date."
+Cancel = True
+
+Else
+
+If DateInitiated > VerificationClosed Then
+MsgBox "The Date Initiated cannot be greater than the Verification Closed Date."
+Cancel = True
+
+End If
+End If
+End If
+End If
+End If
+End If
+End Sub
+
+
+
+
+
+
+
+Private Sub Form_Error(DataErr As Integer, Response As Integer)
+If DataErr = 3058 Then
+   Response = acDataErrContinue
+   MsgBox "You must select a Change Control Number prior to updating this information. The information you have entered will not be saved.", vbOKOnly, "No NCE Number"
+   Me.Undo
+
+   Else
+
+
+   If DataErr = 2169 Then
+   Response = acDataErrContinue
+   MsgBox "Your recent updates will not be saved.", vbOKOnly, "Missing Data"
+   Cancel = True
+
+
+   Else
+   If DataErr = 2237 Then
+   Response = acDataErrContinue
+   MsgBox "This information is not available in the drop down list as selectable option.", vbOKOnly, "Data Doesn't Exist"
+   Cancel = True
+
+   Else
+
+   If DataErr = 2113 Then
+   Response = acDataErrContinue
+   MsgBox "You must enter a date in this field.", vbOKOnly, "Wrong Data Type Entered"
+   Cancel = True
+
+
+   Exit Sub
+ End If
+ End If
+ End If
+ End If
+End Sub
+
+Private Sub Form_Load()
+
+ DoCmd.GoToRecord , , acNewRec
+
+End Sub
+
+
+
+
+
+
+
+
+
+
+Private Sub SearchChangeControlNumber_AfterUpdate()
+Me.Filter = "[ChangeControlNumber] Like '*" & [SearchCHangeControlNumber] & "*'"
+Me.FilterOn = True
+'Me.[ChangeControlNumber].SetFocus
+'DoCmd.FindRecord Me.SearchChangeControlNumber, acAnywhere, , acSearchAll, , acAll, True
+End Sub
+
+Private Sub SearchChangeControlNumber_LostFocus()
+Me.SearchCHangeControlNumber = ""
+End Sub
+
+Private Sub TargetCompletionDate_BeforeUpdate(Cancel As Integer)
+If TargetCompletionDate < DateInitiated Then
+MsgBox "The Target Completion Date cannot be prior to the Date Initiated."
+Cancel = True
+End If
+End Sub
+
+Private Sub VerificationClosed_BeforeUpdate(Cancel As Integer)
+If VerificationClosed < VerificationDue Then
+MsgBox "The Verification Closed Date cannot be prior to the Verification Due Date."
+Cancel = True
+
+Else
+
+If IsNull([VerificationDue]) Then
+MsgBox "You must enter the Verification Due Date prior to entering the Closed Date."
+Cancel = True
+Me.Undo
+
+End If
+End If
+End Sub
+
+Private Sub VerificationDue_BeforeUpdate(Cancel As Integer)
+If VerificationDue < DateInitiated Then
+MsgBox "The Verification Due date cannot be prior to the date this Change Control was initiated."
+Cancel = True
+
+Else
+
+If IsNull([VerificationPlan]) Then
+MsgBox "You must enter the Verification Plan prior to entering the Verification Due Date."
+Cancel = True
+Me.Undo
+
+Else
+
+If VerificationDue < ClosureDate Then
+MsgBox "The Verification Due Date cannot be prior to the Change Control Closure Date."
+Cancel = True
+Me.Undo
+
+End If
+End If
+End If
+End Sub

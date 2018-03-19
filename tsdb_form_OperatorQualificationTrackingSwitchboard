@@ -1,0 +1,132 @@
+Option Compare Database
+
+Private Sub Command5_Click()
+DoCmd.Close
+DoCmd.OpenForm "Login_Form"
+End Sub
+
+
+
+Private Sub Command12_Click()
+DoCmd.OpenForm "OpQualOperatorTrainingEntry_Form"
+End Sub
+
+Private Sub Command17_Click()
+DoCmd.Close
+DoCmd.OpenForm "Login_Form"
+End Sub
+
+Private Sub Command22_Click()
+DoCmd.OpenForm "AddNewClient8_Form"
+End Sub
+
+Private Sub Command24_Click()
+DoCmd.OpenForm "AddNewUO_Form"
+End Sub
+
+Private Sub Command26_Click()
+DoCmd.OpenForm "AddNewBRStep_Form"
+End Sub
+
+Private Sub Command28_Click()
+DoCmd.OpenForm "AddNewSOP_Form"
+End Sub
+
+
+
+Private Sub Command45_Click()
+On Error GoTo Command45_Click_Err
+DoCmd.OpenReport "OpQualTrainingbyOperator_Report"
+    Exit Sub
+
+Command45_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+
+End Sub
+
+Private Sub Command48_Click()
+On Error GoTo Command48_Click_Err
+DoCmd.OpenReport "OpQualTrainingbyOperatorandProtocol_Report"
+    Exit Sub
+
+Command48_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command54_Click()
+On Error GoTo Command54_Click_Err
+DoCmd.OpenReport "OpQualTrainingbyClient_Report"
+    Exit Sub
+
+Command54_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command56_Click()
+On Error GoTo Command56_Click_Err
+DoCmd.OpenReport "OpQualOperatorUOTrainingStatus_Report"
+    Exit Sub
+
+Command56_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command58_Click()
+On Error GoTo Command58_Click_Err
+DoCmd.OpenReport "OpQualOperatorSOPTrainingStatus_Report"
+    Exit Sub
+
+Command58_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command63_Click()
+DoCmd.OpenForm "AddNewProcess_Form"
+End Sub
+
+Private Sub Command65_Click()
+On Error GoTo Command65_Click_Err
+DoCmd.OpenReport "OperatorQualificationSummary_Report"
+    Exit Sub
+
+Command65_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command7_Click()
+DoCmd.OpenForm "OpQualCourseEntry_Form"
+End Sub
+
+Private Sub Command9_Click()
+DoCmd.OpenForm "OpQualCourseLookup_Form"
+End Sub

@@ -1,0 +1,55 @@
+Private Sub Form_BeforeUpdate(Cancel As Integer)
+If IsNull([RootCauseLevel1]) And [RootCauseLevel2] <> "" Then
+MsgBox ("You must select a Root Cause Level 1.")
+Cancel = True
+
+Else
+
+If IsNull([RootCauseLevel2]) And [RootCauseLevel1] <> "" Then
+MsgBox ("You must select a Root Cause Level 2.")
+Cancel = True
+
+Else
+
+If IsNull([RootCauseLevel2]) And [RootCauseLevel3] <> "" Then
+MsgBox ("You must select a Root Cause Level 2.")
+Cancel = True
+
+Else
+
+If IsNull([RootCauseLevel1]) And [RootCauseLevel3] <> "" Then
+MsgBox ("You must select a Root Cause Level 1.")
+Cancel = True
+
+
+Else
+
+If IsNull([Number]) Then
+MsgBox ("An LIR Number has not been selected.  In order to add a root cause, you must first search for an LIR using the search field at the top of this form and then enter the Root Cause information that is associated.")
+Cancel = True
+
+Else
+
+If IsNull([RootCauseLevel3]) Then
+MsgBox ("You cannot leabe the Root Cause Level 3 field empty.  If there is no data to enter, please enter N/A.")
+Cancel = True
+
+End If
+End If
+End If
+End If
+End If
+End If
+End Sub
+
+Private Sub Form_Error(DataErr As Integer, Response As Integer)
+If DataErr = 2237 Then
+   Response = acDataErrContinue
+   MsgBox "This information is not available in the drop down list as selectable option.", vbOKOnly, "Data Doesn't Exist"
+   Cancel = True
+   RootCauseLevel1 = ""
+   RootCauseLevel2 = ""
+
+   Exit Sub
+   End If
+End Sub

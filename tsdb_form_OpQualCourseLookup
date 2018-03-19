@@ -1,0 +1,30 @@
+Option Compare Database
+
+Private Sub Command44_Click()
+DoCmd.Close
+End Sub
+
+Private Sub ProcessCompleted_BeforeUpdate(Cancel As Integer)
+If [Client] = "Training Banks" Then
+MsgBox "You cannot deactivate process: " & Client & "."
+Cancel = True
+Me.Undo
+
+Else
+
+If [Client] = "Sterile Fill" Then
+MsgBox "You cannot deactivate process: " & Client & "."
+Cancel = True
+Me.Undo
+
+Else
+
+If [Client] = "Media Fill Challenge " Then
+MsgBox "You cannot deactivate process: " & Client & "."
+Cancel = True
+Me.Undo
+
+End If
+End If
+End If
+End Sub

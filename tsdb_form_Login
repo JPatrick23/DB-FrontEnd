@@ -1,0 +1,89 @@
+Private Sub cmdLogin_Click()
+If password = "doctrack02" Then
+DoCmd.Close
+DoCmd.OpenForm "DocumentControlSwitchboard_Form"
+
+
+Else
+
+If password = "qatrack17" Then
+DoCmd.Close
+DoCmd.OpenForm "QualityAssuranceSwitchboard_Form"
+
+Else
+
+If password = "qamanage20" Then
+DoCmd.Close
+DoCmd.OpenForm "AuditSwitchboard_Form"
+
+Else
+
+If password = "change" Then
+DoCmd.Close
+DoCmd.OpenForm "UPdateChangeControlTask_Form"
+
+Else
+
+If password = "man4751" Then
+DoCmd.Close
+DoCmd.OpenForm "ManufacturingSwitchboard_Form"
+
+Else
+
+If password = "qualtrack42" Then
+DoCmd.Close
+DoCmd.OpenForm "OperatorQualificationTrackingSwitchboard_Form"
+
+Else
+
+If password = "mcgowanqa" Then
+DoCmd.Close
+DoCmd.OpenForm "QATSTGapSwitchboard_Form"
+
+Else
+
+If password = "techops01" Then
+DoCmd.Close
+DoCmd.OpenForm "TechOpsSwitchboard_Form"
+
+Else
+
+If IsNull([password]) Or password = "" Then
+DoCmd.Close
+DoCmd.OpenForm "PHLAllHub_Form"
+
+Else
+
+If password = "facilities01" Then
+DoCmd.Close
+DoCmd.OpenForm "EquipmentHistoryMain_Form"
+
+Else
+
+If password = "virgilia" Then
+DoCmd.Close
+DoCmd.OpenForm "ActiveMANListScheduling_Form"
+
+Else
+
+MsgBox ("The password you entered is incorrect.")
+password = ""
+
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+
+
+End Sub
+
+Private Sub Command9_Click()
+DoCmd.Quit
+End Sub

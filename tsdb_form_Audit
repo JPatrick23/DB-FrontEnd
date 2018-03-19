@@ -1,0 +1,26 @@
+
+Private Sub Form_BeforeUpdate(Cancel As Integer)
+If [ClientRegulatoryAgency] = "US Food and Drug Administration (FDA)" And [WarningLetterStatus] = "N/A" Then
+MsgBox "This audit record is associated with the US FDA.  You must select either No 483 Issued or 483 Issued."
+Cancel = True
+Me.Undo
+
+Else
+
+If [ClientRegulatoryAgency] <> "US Food and Drug Administration (FDA)" And [WarningLetterStatus] = "No 483 Issued" Then
+MsgBox "This audit record is NOT associated with the US FDA.  You must select N/A."
+Cancel = True
+Me.Undo
+
+Else
+
+If [ClientRegulatoryAgency] <> "US Food and Drug Administration (FDA)" And [WarningLetterStatus] = "483 Issued" Then
+MsgBox "This audit record is NOT associated with the US FDA.  You must select N/A."
+Cancel = True
+Me.Undo
+
+End If
+  End If
+    End If
+
+End Sub

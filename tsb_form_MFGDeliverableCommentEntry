@@ -1,0 +1,59 @@
+Option Compare Database
+
+
+
+Private Sub Add_New_Protocol_Click()
+DoCmd.Close
+DoCmd.OpenForm "AddNewProtocol2_Form"
+End Sub
+
+Private Sub Command127_Click()
+DoCmd.Close
+DoCmd.OpenForm "AddNewClient6_Form"
+End Sub
+
+Private Sub Command26_Click()
+DoCmd.Close
+DoCmd.OpenForm "QualityAssuranceSwitchboard_Form"
+End Sub
+
+Private Sub Command44_Click()
+DoCmd.Close
+DoCmd.OpenForm "ManufacturingSwitchboard_Form"
+End Sub
+
+Private Sub Command70_Click()
+On Error GoTo Command70_Click_Err
+DoCmd.OpenReport "QAMANRFTForm_Report"
+    Exit Sub
+
+Command70_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+
+
+
+
+
+
+
+
+
+
+Private Sub LotNumber_Click()
+SendKeys "{Home}"
+End Sub
+
+Private Sub lstAccession_Click()
+SendKeys "{Home}"
+End Sub
+
+Private Sub lstLotNumber_Click()
+SendKeys "{Home}"
+End Sub

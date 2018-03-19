@@ -1,0 +1,507 @@
+Private Sub AddNewNCE_Click()
+On Error GoTo Err_AddNewNCE_Click
+
+
+    DoCmd.GoToRecord , , acNewRec
+  If IsNull(NCENumber) = True Then
+            NCENumber = NewSeqNumber(Prefix.Value)
+            DoCmd.DoMenuItem acFormBar, acRecordsMenu, acSaveRecord, , acMenuVer70
+            Me.DateNCEInitiated = Date
+            Me.SiteLocation = "PHL"
+            Me.ClosureDueDate = DateNCEInitiated + 30
+    End If
+Exit_AddNewNCE_Click:
+    Exit Sub
+
+Err_AddNewNCE_Click:
+    MsgBox ("You cannot generate a new NCE Number while fields within this form are populated with information.")
+    Cancel = True
+    Me.Undo
+    Resume Exit_AddNewNCE_Click
+
+
+  End Sub
+
+
+
+
+
+Private Sub ClosureDueDate_BeforeUpdate(Cancel As Integer)
+If [ClosureDueDate] < [DateNCEInitiated] Then
+MsgBox ("The Due for Closure date cannot be prior to the Date NCE Initiated.")
+Cancel = True
+End If
+End Sub
+
+
+
+
+Private Sub DateActionPlanApproved_BeforeUpdate(Cancel As Integer)
+If [DateActionPlanApproved] > Date Then
+MsgBox ("You cannot enter a future date for the Date Action Plan Approved.")
+Cancel = True
+
+Else
+
+If [DateActionPlanApproved] <> Form_ActionPlan_Form.DateActionPlanApproved Then
+MsgBox ("The Date Action Plan Approved must match the Date Action Plan Approved below.")
+Cancel = True
+Me.Undo
+
+Else
+
+
+If IsNull([DateActionPlanApproved]) And Form_ActionPlan_Form.DateActionPlanApproved <> "" Then
+MsgBox ("You cannot delet the Date Action Plan Approved since there are associated QA Approved Action Plan records below.")
+Cancel = True
+Me.Undo
+
+
+End If
+End If
+End If
+End Sub
+
+
+
+
+
+Private Sub Combo141_BeforeUpdate(Cancel As Integer)
+If [NCEClosureDate] <> "" Then
+Cancel = True
+MsgBox ("You cannot cancel this NCE because the NCE Closure Date has been entered.")
+Me.Undo
+End If
+End Sub
+
+Private Sub DateNCECancelled_BeforeUpdate(Cancel As Integer)
+If [NCEClosureDate] <> "" Then
+Cancel = True
+MsgBox ("You cannot cancel this NCE because the NCE Closure Date has been entered.")
+Me.Undo
+
+
+End If
+End Sub
+
+Private Sub DateNCEInitiated_AfterUpdate()
+ClosureDueDate = DateNCEInitiated + 30
+End Sub
+
+Private Sub DateNCEInitiated_BeforeUpdate(Cancel As Integer)
+If [DateNCEInitiated] > Date Then
+MsgBox ("You cannot enter a future date for the date the Date NCE was Initiated.")
+Cancel = True
+
+Else
+
+If [DateNCEInitiated] < [EventOccurredDate] Then
+MsgBox ("The Date NCE Initiated cannot be prior to the Event Occurred Date.")
+Cancel = True
+
+Else
+
+If [DateNCEInitiated] < [EventDiscoveredDate] Then
+MsgBox ("The Date NCE Initiated cannot be prior to the Event Discovered Date.")
+Cancel = True
+
+Else
+
+If [DateNCEInitiated] > [NCEClosureDate] Then
+MsgBox ("The Date NCE Initiated cannot be after the NCE Closure Date.")
+Cancel = True
+
+
+End If
+End If
+End If
+End If
+End Sub
+
+Private Sub EffectedDepartment_BeforeUpdate(Cancel As Integer)
+If [EffectedDepartment] = "Manufacturing" Then
+MsgBox "You cannot select Manufacturing as a department.  Please select one of the available Manufacturing subgroups."
+Cancel = True
+End If
+
+End Sub
+
+Private Sub EventDiscoveredDate_BeforeUpdate(Cancel As Integer)
+If [EventDiscoveredDate] > Date Then
+MsgBox ("You cannot enter a future date for the Event Discovered Date.")
+Cancel = True
+
+Else
+
+If [EventDiscoveredDate] < [EventOccurredDate] Then
+MsgBox ("The Event Discovered Date cannot be prior to the Event Occurred Date.")
+Cancel = True
+
+Else
+
+If [EventDiscoveredDate] > [DateNCEInitiated] Then
+MsgBox ("The Event Discovered Date cannot be after the Date NCE Initiated.")
+Cancel = True
+
+
+End If
+End If
+End If
+End Sub
+
+Private Sub EventOccurredDate_BeforeUpdate(Cancel As Integer)
+If [EventOccurredDate] > Date Then
+MsgBox ("You cannot enter a future date for the Event Occurred Date.")
+Cancel = True
+
+Else
+
+If [EventOccurredDate] > [EventDiscoveredDate] Then
+MsgBox ("The Event Occurred Date cannot be after the event Discovered Date.")
+Cancel = True
+
+Else
+
+
+If [EventOccurredDate] > [DateNCEInitiated] Then
+MsgBox ("The Event Occurred Date cannot be after the Event Initiated Date.")
+Cancel = True
+
+
+End If
+End If
+End If
+End Sub
+
+
+Private Sub Form_Error(DataErr As Integer, Response As Integer)
+If DataErr = 3058 Then
+   Response = acDataErrContinue
+   MsgBox "You must select an NCE Number prior to updating this information. The information you have entered will not be saved.", vbOKOnly, "No NCE Number"
+   Me.Undo
+
+   Else
+
+
+   If DataErr = 2169 Then
+   Response = acDataErrContinue
+   MsgBox "Your recent updates will not be saved.", vbOKOnly, "Missing Data"
+   Cancel = True
+
+
+   Else
+   If DataErr = 2237 Then
+   Response = acDataErrContinue
+   MsgBox "The information you are trying to enter is not available in the system.", vbOKOnly, "Not a Selectable Data Type"
+   Cancel = True
+
+   Else
+
+   If DataErr = 2113 Then
+   Response = acDataErrContinue
+   MsgBox "You must enter a date in this field.", vbOKOnly, "Wrong Data Type Entered"
+   Cancel = True
+
+
+
+
+
+ End If
+ End If
+ End If
+ End If
+End Sub
+
+Private Sub Form_Load()
+
+ DoCmd.GoToRecord , , acNewRec
+
+End Sub
+
+
+Private Sub NCEClosureDate_BeforeUpdate(Cancel As Integer)
+If [NCEClosureDate] > Date Then
+MsgBox ("You cannot enter a future date for the NCE Closure Date.")
+Cancel = True
+
+Else
+
+If [NCEClosureDate] < DateNCEInitiated Then
+MsgBox ("The NCE Closure Date cannot be prior to the date this NCE was initiated.")
+Cancel = True
+
+Else
+
+If [DateNCECancelled] <> "" Then
+MsgBox ("You cannot enter the NCE Closure Date because a cancelled date has been entered.")
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([QAReviewer]) Then
+MsgBox ("You cannot enter the NCE Closure Date until the QA Reviewer has been selected or entered in the field above.")
+Cancel = True
+Me.Undo
+
+End If
+End If
+End If
+End If
+End Sub
+
+
+
+
+
+
+
+Private Sub ReasonCancelled_BeforeUpdate(Cancel As Integer)
+If [NCEClosureDate] <> "" Then
+Cancel = True
+MsgBox ("You cannot cancel this NCE because the NCE Closure Date has been entered.")
+Me.Undo
+End If
+End Sub
+
+Private Sub SaveNCE_Click()
+If [EventType] = "Other" And [OtherEventType] = "N/A" Then
+MsgBox ("You have selected Other for the Event Type, but did not identify the Event Type in the Other Event Type field.  You must identify the Event Type before this record can be saved.")
+Cancel = True
+
+Else
+
+If [EventType] = "Other" And IsNull([OtherEventType]) Then
+MsgBox ("You have selected Other for the Event Type, but did not identify the Event Type in the Other Event Type field.  You must identify the Event Type before this record can be saved.")
+Cancel = True
+
+Else
+
+If [Disposition] = "Other Disposition" And [OtherDisposition] = "N/A" Then
+MsgBox ("You have selected Other Disposition, but did not identify the Disposition in the Other Disposition field.  You must identify the Disposition before this record can be saved.")
+Cancel = True
+
+Else
+
+If [Disposition] = "Other Disposition" And IsNull([OtherDisposition]) Then
+MsgBox ("You have selected Other Disposition, but did not identify the Disposition in the Other Disposition field.  You must identify the Disposition before this record can be saved.")
+Cancel = True
+
+
+Else
+
+If [NCEClosureDate] <> "" And IsNull([DateNCEInitiated]) Then
+MsgBox ("The NCE Closure Date has been entered, but you have left the Date NCE Initiated field empty.  You must complete this entry to save this record.")
+Cancel = True
+
+
+Else
+
+If [NCEClosureDate] <> "" And IsNull([EventOccurredDate]) Then
+MsgBox ("The NCE Closure Date has been entered, but you have left the Event Occurred Date empty.  You must complete this entry to save this record.")
+Cancel = True
+
+
+Else
+
+If [NCEClosureDate] <> "" And IsNull([Initiator]) Then
+MsgBox ("The NCE Closure Date has been entered, but you have left the Initiator field empty.  You must complete this entry to save this record.")
+Cancel = True
+
+
+Else
+
+If [NCEClosureDate] <> "" And IsNull([EventDiscoveredDate]) Then
+MsgBox ("The NCE Closure Date has been entered, but you have left the Event Discovered Date empty.  You must complete this entry to save this record.")
+Cancel = True
+
+
+Else
+
+
+If [NCEClosureDate] <> "" And IsNull([EventDiscoveredBy]) Then
+MsgBox ("The NCE Closure Date has been entered, but you have left the Event Discovered By field empty.  You must complete this entry to save this record.")
+Cancel = True
+
+
+Else
+
+
+If [NCEClosureDate] <> "" And IsNull([StudyDirector/AreaManager]) Then
+MsgBox ("The NCE Closure Date has been entered, but you have left the Study Director/Area Manager field empty.  You must complete this entry to save this record.")
+Cancel = True
+
+
+Else
+
+If [NCEClosureDate] <> "" And IsNull([EventType]) Then
+MsgBox ("The NCE Closure Date has been entered, but you have left the Event Type field empty.  You must complete this entry to save this record.")
+Cancel = True
+
+
+Else
+
+
+If [NCEClosureDate] <> "" And IsNull([OtherEventType]) Then
+MsgBox ("The NCE Closure Date has been entered, but you have left the Other Event Type field empty.  You must complete this entry to save this record.")
+Cancel = True
+
+
+Else
+
+If [NCEClosureDate] <> "" And IsNull([EffectedDepartment]) Then
+MsgBox ("The NCE Closure Date has been entered, but you have left the Effected Department field empty.  You must complete this entry to save this record.")
+Cancel = True
+
+
+Else
+
+If [NCEClosureDate] <> "" And IsNull([Investigator]) Then
+MsgBox ("The NCE Closure Date has been entered, but you have left the Investigator field empty.  You must complete this entry to save this record.")
+Cancel = True
+
+
+Else
+
+If [NCEClosureDate] <> "" And [DescriptionofEvent] = "" Then
+MsgBox ("The NCE Closure Date has been entered, but you have left the Description of Event field empty.  You must complete this entry to save this record.")
+Cancel = True
+
+
+Else
+
+If [NCEClosureDate] <> "" And [Correction] = "" Then
+MsgBox ("The NCE Closure Date has been entered, but you have left the Correction (Immediate Action) field empty.  You must complete this entry to save this record.")
+Cancel = True
+
+
+Else
+
+If [NCEClosureDate] <> "" And IsNull([NCERiskLevel]) Then
+MsgBox ("The NCE Closure Date has been entered, but you have left the NCE Risk Level field empty.  You must complete this entry to save this record.")
+Cancel = True
+
+
+Else
+
+
+If [NCEClosureDate] <> "" And IsNull([Disposition]) Then
+MsgBox ("The NCE Closure Date has been entered, but you have left the Disposition field empty.  You must complete this entry to save this record.")
+Cancel = True
+
+
+Else
+
+
+If [NCEClosureDate] <> "" And IsNull([OtherDisposition]) Then
+MsgBox ("The NCE Closure Date has been entered, but you have left the Other Disposition field empty.  You must complete this entry to save this record.")
+Cancel = True
+
+Else
+
+If [NCEClosureDate] <> "" And IsNull([ClientNotificationDate]) Then
+MsgBox ("You must enter the Client Notification Date.  If this information does not apply, enter N/A.")
+Cancel = True
+Else
+
+If [DateNCECancelled] <> "" And IsNull([ReasonCancelled]) Then
+MsgBox ("You must enter the reason this NCE was cancelled since you have entered the date the NCE was cancelled.")
+Cancel = True
+
+Else
+
+If IsNull([DateNCECancelled]) And [ReasonCancelled] <> "" Then
+MsgBox ("You must enter the date the NCE was cancelled since you have entered a reason for why this NCE has been cancelled.")
+Cancel = True
+
+Else
+
+
+If IsNull([CancelledBy]) And [ReasonCancelled] <> "" Then
+MsgBox ("You must select the name of the individual who cancelled the NCE since you have entered a reason for why this NCE has been cancelled.")
+Cancel = True
+
+Else
+
+
+If IsNull([CancelledBy]) And [DateNCECancelled] <> "" Then
+MsgBox ("You must select the name of the individual who cancelled the NCE since you have entered the Date NCE Cancelled.")
+Cancel = True
+
+Else
+
+If [DateNCECancelled] <> "" And IsNull([ReasonCancelled]) Then
+MsgBox ("You must enter the Reason Cancelled since you have entered the date the NCE was cancelled.")
+Cancel = True
+
+
+
+Else
+
+
+If [DateNCECancelled] <> "" And IsNull([CancelledBy]) Then
+MsgBox ("You must select the individual who cancelled the NCE since you have entered the Date NCE Cancelled.")
+Cancel = True
+
+Else
+
+If IsNull([ReasonCancelled]) And [CancelledBy] <> "" Then
+MsgBox ("You must enter the Reason Cancelled since you have selected the individual who cancelled the NCE.")
+Cancel = True
+
+
+
+Else
+
+
+If IsNull([NCENumber]) Then
+MsgBox ("An NCE Number has not been assigned.  No information will be saved.")
+DoCmd.Close
+
+
+Else
+
+DoCmd.Close
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End Sub
+
+Private Sub SearchNCENumber_AfterUpdate()
+
+Me.Filter = "[NCENumber] Like '*" & [SearchNCENumber] & "*'"
+Me.FilterOn = True
+'Me.[NCENumber].SetFocus
+'DoCmd.FindRecord Me.SearchNCENumber, acAnywhere, , acSearchAll, , acAll, True
+
+End Sub
+
+Private Sub SearchNCENumber_LostFocus()
+Me.SearchNCENumber = ""
+
+End Sub

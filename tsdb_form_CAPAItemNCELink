@@ -1,0 +1,8 @@
+Private Sub Form_Error(DataErr As Integer, Response As Integer)
+If DataErr = 3058 Then
+   Response = acDataErrContinue
+   MsgBox "You must issue a CAPA Number through the CAPA Initiation Form prior to selecting the applicable CAPA number for this NCE.", vbOKOnly, "Missing Data"
+   Me.Undo
+   End If
+   Exit Sub
+End Sub

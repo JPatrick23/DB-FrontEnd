@@ -1,0 +1,262 @@
+Private Sub CompletionDate_BeforeUpdate(Cancel As Integer)
+If [ImplementationCompletionDate] < [ImplementationDueDate] Then
+MsgBox ("The Implementation Completion Date cannot be prior to the Implementation Due Date.")
+Cancel = True
+End If
+
+End Sub
+
+Private Sub DateActionPlanApproved_BeforeUpdate(Cancel As Integer)
+If [DateActionPlanApproved] > Date Then
+MsgBox ("You cannot enter a future date for Date Action Plan Approved.")
+Cancel = True
+Me.Undo
+End If
+End Sub
+
+Private Sub Form_BeforeUpdate(Cancel As Integer)
+
+If IsNull([CAPANumber]) Then
+MsgBox ("You have not Generated a CAPA Number for this record.  You must Generate a CAPA Number prior to entering any CAPA Details.")
+Cancel = True
+Me.Undo
+
+Else
+
+
+If IsNull([ActionType]) Then
+MsgBox ("You must select the Action Type associated with the Action Plan.")
+Cancel = True
+Me.Undo
+
+Else
+
+If [ActionPlan] = "" Then
+MsgBox ("You must enter the Action Plan information associated with the Action Plan.")
+Cancel = True
+Me.Undo
+Else
+
+
+
+If IsNull([Owner]) Then
+MsgBox ("You must identify the Owner for this Action Plan.")
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([DateActionPlanApproved]) Then
+MsgBox ("You must enter the Date Action Plan Approved.")
+Cancel = True
+Me.Undo
+
+
+Else
+
+If IsNull([ImplementationDueDate]) Then
+MsgBox ("You must enter the Implementation Due Date for this Action Plan.")
+Cancel = True
+Me.Undo
+Else
+
+
+End If
+End If
+End If
+End If
+End If
+End If
+End Sub
+
+Private Sub Form_Error(DataErr As Integer, Response As Integer)
+
+If DataErr = 2237 Then
+   Response = acDataErrContinue
+   MsgBox "The information you have entered is not available in the system..", vbOKOnly, "Data Doesn't Exist"
+   Cancel = True
+   Owner = ""
+   ActionType = ""
+
+Else
+
+If DataErr = 2113 Then
+   Response = acDataErrContinue
+   MsgBox "You must enter a date in this field.", vbOKOnly, "Wrong Data Type Entered"
+   Cancel = True
+   End If
+   End If
+End Sub
+
+
+
+Private Sub InitiationDate_BeforeUpdate(Cancel As Integer)
+If [ImplementationDueDate] > Date Then
+MsgBox ("A future date cannot be entered for the Implementation Due Date.")
+Cancel = True
+
+Else
+
+If [ImplementationDueDate] < Date - 7 Then
+MsgBox ("You cannot enter a back date of more than 7 days ago for the Initiation Date.")
+Cancel = True
+
+End If
+End If
+End Sub
+
+
+
+
+Private Sub ImplementationCompletionDate_BeforeUpdate(Cancel As Integer)
+If [ImplementationCompletionDate] < [DateActionPlanApproved] Then
+MsgBox ("The Implementation Completion Date cannot be prior to the Date Action Plan Approved.")
+Cancel = True
+Me.Undo
+
+
+Else
+
+
+If IsNull([ImplementationDueDate]) Then
+MsgBox ("You must enter the Implememntation Due Date in order to enter the Implementation Completion date.")
+Cancel = True
+Me.Undo
+
+
+Else
+
+If [ImplementationCompletionDate] > Date Then
+MsgBox ("You cannot forward date the Implementation Completion Date.")
+Cancel = True
+Me.Undo
+
+Else
+
+If [ImplementationCompletionDate] < Date - 7 Then
+MsgBox ("You cannot enter a back date of more than 3 days for the Implementation Completion Date.")
+Cancel = True
+Me.Undo
+
+
+End If
+End If
+End If
+End If
+End Sub
+
+Private Sub TargetDueDate_AfterUpdate()
+If [ImplementationDueDate] <> "" Then
+[VerificationDueDate] = [ImplementationDueDate] + 30
+
+End If
+End Sub
+
+Private Sub TargetDueDate_BeforeUpdate(Cancel As Integer)
+If [ImplementationDueDate] < [DateActionPlanApproved] Then
+MsgBox ("The Implementation Due Date cannot be prior to the Date Action Plan Approved.")
+Cancel = True
+Me.Undo
+
+
+If [ImplementationDueDate] < Date Then
+MsgBox ("You cannot back date the Implementation Due Date.")
+Cancel = True
+Me.Undo
+
+End If
+End If
+End Sub
+
+Private Sub VerificationCompletionDate_BeforeUpdate(Cancel As Integer)
+If [VerificationCompletionDate] < [ImplementationCompletionDate] Then
+MsgBox ("The Verification Completion Date cannot be prior to the Implementtaion Completion Date.")
+Cancel = True
+Me.Undo
+
+
+Else
+
+If IsNull([ActionType]) Then
+MsgBox ("You cannot enter the Verification Completion Date until you have identified the Action Type.")
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([ActionPlan]) Then
+MsgBox ("You cannot enter the Verification Completion Date until you have identified the Action Plan.")
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([Owner]) Then
+MsgBox ("You cannot enter the Verification Completion Date until you have identified the Owner of this Action Plan.")
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([ImplementationDueDate]) Then
+MsgBox ("You cannot enter the Verification Completion Date until you have identified the Implementation Due Date.")
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([ImplementationCompletionDate]) Then
+MsgBox ("You cannot enter the Verification Completion Date until you have identified the Implementation Completion Date.")
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([VerificationEffectivenessPlan]) Then
+MsgBox ("You cannot enter the Verification Completion Date until you have identified the Verification Effectiveness Plan.")
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([VerificationDueDate]) Then
+MsgBox ("You cannot enter the Verification Completion Date until you have identified the Verification Due Date.")
+Cancel = True
+Me.Undo
+
+
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+
+End Sub
+
+Private Sub VerificationDueDate_BeforeUpdate(Cancel As Integer)
+If [VerificationDueDate] < [ImplementationCompletionDate] Then
+MsgBox ("The Verification Due Date cannot be prior to the Implementation Completion Date.")
+Cancel = True
+Me.Undo
+
+Else
+
+If [VerificationDueDate] < Date Then
+MsgBox ("You cannot back date the Verification Due Date.")
+Cancel = True
+Me.Undo
+
+Else
+
+If [VerificationDueDate] < [ImplementationCompletionDate] Then
+MsgBox ("The Verification Due Date cannot be prior to the Implementation Completion Date.")
+Cancel = True
+Me.Undo
+
+End If
+End If
+End If
+End Sub

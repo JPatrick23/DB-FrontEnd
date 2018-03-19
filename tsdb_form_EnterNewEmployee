@@ -1,0 +1,82 @@
+Private Sub Combo39_BeforeUpdate(Cancel As Integer)
+If [DepartmentGrouping] = "All PHL Sites - Core Training" Then
+MsgBox "You cannot select this option."
+Cancel = True
+
+Else
+
+If [DepartmentGrouping] = "Manufacturing - Core" Then
+MsgBox "You cannot select this option."
+Cancel = True
+
+End If
+End If
+End Sub
+
+Private Sub Combo41_BeforeUpdate(Cancel As Integer)
+If [DepartmentGrouping] = "All PHL Sites - Core Training" Then
+MsgBox "You cannot select this option."
+Cancel = True
+
+Else
+
+If [DepartmentGrouping] = "Manufacturing - Core" Then
+MsgBox "You cannot select this option."
+Cancel = True
+
+End If
+End If
+End Sub
+
+Private Sub Command14_Click()
+
+DoCmd.Close
+
+
+End Sub
+
+Private Sub Department_BeforeUpdate(Cancel As Integer)
+If [DepartmentGrouping] = "All Departments - Core Training" Then
+MsgBox "You cannot select this core option.  Only specialized options may be selected and entered."
+Cancel = True
+End If
+End Sub
+
+Private Sub Form_BeforeUpdate(Cancel As Integer)
+If IsNull([EmployeeName]) Or IsNull([JobTitle]) Or IsNull([HireDate]) Or IsNull([DepartmentGrouping]) Or IsNull([Facility]) Then
+MsgBox ("You must enter information in all fields.  This record will not be saved")
+Cancel = True
+Me.Undo
+Exit Sub
+End If
+End Sub
+
+Private Sub Form_Error(DataErr As Integer, Response As Integer)
+If DataErr = 3022 Then
+   Response = acDataErrContinue
+   MsgBox "Employee " & EmployeeName & ", Hired on " & HireDate & " already exists.  The record will not be saved.", vbOKOnly, "Duplicate Entry Error"
+
+   Exit Sub
+End If
+
+
+If DataErr = 2237 Then
+   Response = acDataErrContinue
+   MsgBox "The information you are trying to enter does not exist as a selectable item in the system.", vbOKOnly, "Not a Selectable Data Type"
+   Department = ""
+   Cancel = True
+   Me.Undo
+   Exit Sub
+
+   End If
+End Sub
+
+
+Private Sub Site_BeforeUpdate(Cancel As Integer)
+If [Site] = "ALL" Then
+MsgBox "You cannot select ALL for the Site identification."
+Cancel = True
+
+End If
+
+End Sub

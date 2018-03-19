@@ -1,0 +1,5 @@
+Option Compare Database
+
+Private Sub Command3_Click()
+DoCmd.Close
+End Sub

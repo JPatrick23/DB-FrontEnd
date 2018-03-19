@@ -1,0 +1,16 @@
+Option Compare Database
+
+Private Sub Form_Error(DataErr As Integer, Response As Integer)
+If DataErr = 3022 Then
+   Response = acDataErrContinue
+   MsgBox "Protocol Number " & Number & " already exists in this database for History Tracking.", vbOKOnly, "Duplicate Entry Error"
+   Me.Undo
+   Exit Sub
+End If
+If DataErr = 2169 Then
+   Response = acDataErrContinue
+   MsgBox "This form will close and the record will not be saved.", vbOKOnly, "Duplicate Entry Error"
+   Exit Sub
+End If
+
+End Sub

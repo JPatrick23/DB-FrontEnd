@@ -1,0 +1,68 @@
+Option Compare Database
+
+Private Sub DateLoaned_BeforeUpdate(Cancel As Integer)
+If ([DateLoaned]) > Date Or ([DateLoaned]) < Date Then
+MsgBox ("The date loaned must be today's date.")
+Cancel = True
+End If
+End Sub
+
+Private Sub DateReturnedtoArchives_BeforeUpdate(Cancel As Integer)
+
+If [DateReturnedtoArchives] > Date Then
+MsgBox ("You cannot enter a future date for the Date Returned to Archives.")
+Cancel = True
+
+Else
+
+If [DateReturnedtoArchives] < [DateReturnedtoArchivist] Then
+MsgBox ("The date Returned to Archives cannot be prior to the Date Returned to Archivist.")
+Cancel = True
+
+End If
+End If
+End Sub
+
+Private Sub DateReturnedtoArchivist_BeforeUpdate(Cancel As Integer)
+If [DateReturnedtoArchivist] > Date Then
+MsgBox ("You cannot enter a future date for the Date Returned to Archivist.")
+Cancel = True
+
+Else
+
+If [DateReturnedtoArchivist] < [DateLoaned] Then
+MsgBox ("The date Returned to the Archivist cannot be prior to the Date Loaned.")
+Cancel = True
+
+End If
+End If
+End Sub
+
+Private Sub Form_BeforeUpdate(Cancel As Integer)
+If IsNull([LoanedTo]) Then
+MsgBox ("You must select the individual that this record was loaned to.")
+Cancel = True
+Else
+If IsNull([DateLoaned]) Then
+MsgBox ("You must enter the date this record was loaned.")
+Cancel = True
+End If
+End If
+End Sub
+
+Private Sub Form_Error(DataErr As Integer, Response As Integer)
+If DataErr = 2237 Then
+   Response = acDataErrContinue
+   MsgBox "The information you are trying to search is not a selectable option for Archive record search.", vbOKOnly, "Not a Selectable Data Type"
+   Cancel = True
+
+   Else
+
+    If DataErr = 2113 Then
+   Response = acDataErrContinue
+   MsgBox "You must enter a date in this field.", vbOKOnly, "Wrong Data Type Entered"
+   Cancel = True
+
+   End If
+   End If
+End Sub

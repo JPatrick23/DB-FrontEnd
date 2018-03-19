@@ -1,0 +1,318 @@
+Private Sub Combo38_BeforeUpdate(Cancel As Integer)
+If IsNull([DateEffective]) Then
+MsgBox "You must enter the Effective Date prior to entering " & [QSCloser] & " as the QS Closer."
+Cancel = True
+Me.Undo
+End If
+End Sub
+
+Private Sub DateEffective_BeforeUpdate(Cancel As Integer)
+
+
+
+If [DCRCancelled] = "Yes" Then
+MsgBox ("This DCR has been cancelled; therefore it cannot be designated as Effective.  If you need to cancel this DCR, first remove the effective date.")
+Cancel = True
+Me.Undo
+
+
+Else
+
+If [DateEffective] > Date Then
+MsgBox ("The Effective Date cannot be greater than today's date.")
+Cancel = True
+Me.Undo
+
+Else
+
+If [DateEffective] < [QADocLogIn] Then
+MsgBox ("The Effective Date cannot be prior to the Date of Log In.")
+Cancel = True
+Me.Undo
+
+Else
+
+
+If IsNull([QADocLogIn]) And [DateEffective] <> "" Then
+MsgBox ("You must enter the Date of Log In prior to entering the Effective Date.")
+Cancel = True
+Me.Undo
+
+Else
+
+
+If IsNull([CompletionDate]) And IsNull([QAResponsible]) Then
+MsgBox ("This document has not yet undergone QA review; therefore, it cannot be made effective.")
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([CompletionDate]) And QAResponsible <> "" Then
+MsgBox ("You cannot make this document effective because " & QAResponsible & " did not input the Completion Date for review.")
+Cancel = True
+Me.Undo
+
+End If
+End If
+End If
+End If
+End If
+End If
+End Sub
+
+Private Sub DateIssued_BeforeUpdate(Cancel As Integer)
+
+If [DateIssued] > Date Then
+MsgBox ("The Issued Date cannot be greater than today's date.")
+Cancel = True
+
+
+
+Else
+
+If IsNull([DateIssued]) Then
+MsgBox ("You must enter the date issued for this document.")
+Cancel = True
+
+Else
+
+If [DateIssued] > [TargetCompletionDate] Then
+MsgBox "The Date Issued cannot be after the Target Completion Date."
+Cancel = True
+
+
+End If
+End If
+End If
+
+End Sub
+
+Private Sub DateLoggedIn_BeforeUpdate(Cancel As Integer)
+If [DateLoggedIn] > Date Then
+MsgBox ("The Date Logged In cannot be greater than today's date.")
+Cancel = True
+
+
+Else
+
+If [DateLoggedIn] < Date - 3 Then
+MsgBox ("The Date Logged In cannot be greater than three days ago.")
+Cancel = True
+
+
+
+End If
+End If
+
+End Sub
+
+Private Sub DateObsolete_BeforeUpdate(Cancel As Integer)
+If IsNull([DateEffective]) Then
+MsgBox ("You cannot obsolete a document that has not yet been made effective.  Please enter the effective date of this document, to make obsolete.")
+Cancel = True
+Me.Undo
+
+
+Else
+
+If [DateObsolete] > Date Then
+MsgBox ("The Date Obsolete cannot be greater than today's date.")
+Cancel = True
+Me.Undo
+
+Else
+
+If [DateObsolete] < [DateEffective] Then
+MsgBox ("The Date Obsolete cannot be prior to the Date Effective.")
+Cancel = True
+Me.Undo
+
+
+End If
+End If
+End If
+End Sub
+
+
+
+
+
+Private Sub DCRCancelled_BeforeUpdate(Cancel As Integer)
+If [DCRCancelled] = "Yes" And ([DateEffective]) <> "" Then
+
+MsgBox ("You cannot cancel an Effective DCR.")
+Cancel = True
+Me.Undo
+End If
+End Sub
+
+
+
+
+
+
+Private Sub Form_BeforeUpdate(Cancel As Integer)
+
+
+If IsNull([Version]) Then
+MsgBox ("You must enter the version for this document.")
+Cancel = True
+
+Else
+
+If IsNull([Title]) Then
+MsgBox ("You must enter the title for this document.")
+Cancel = True
+
+
+Else
+
+If IsNull([DateIssued]) Then
+MsgBox ("You must enter the date issued for this document.")
+Cancel = True
+
+Else
+
+If IsNull([IssuedTo]) Then
+MsgBox ("You must enter the person this document was issued to.")
+Cancel = True
+
+Else
+
+If IsNull([TargetCompletionDate]) Then
+MsgBox ("You must enter the Target Completion  Date.")
+Cancel = True
+
+Else
+
+If IsNull([DocControlComments]) Then
+MsgBox ("The Doc Control Comments field is empty.  You must enter a comment or type N/A if there are no comments.")
+Cancel = True
+
+Else
+
+If IsNull([DCRCancelled]) Then
+MsgBox ("You must select either Yes or No for Cancelled.")
+Cancel = True
+
+Else
+
+If IsNull([QSIssuer]) Then
+MsgBox ("You must select or enter the Quality Systems Issuer.")
+Cancel = True
+
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End Sub
+
+Private Sub Form_Error(DataErr As Integer, Response As Integer)
+If DataErr = 3022 Then
+   Response = acDataErrContinue
+   MsgBox "The record " & Prefix & " " & Number & "." & Version & " already exists. The record will not be saved.", vbOKOnly, "Duplicate Entry Error"
+   Me.Undo
+   Exit Sub
+End If
+If DataErr = 2169 Then
+   Response = acDataErrContinue
+   MsgBox "This form will close and the record will not be saved.", vbOKOnly, "Duplicate Entry Error"
+   Exit Sub
+End If
+If DataErr = 2237 Then
+   Response = acDataErrContinue
+   MsgBox "The information you have entered is not available.", vbOKOnly, "Not a Selectable Data Type"
+   Prefix = ""
+   Cancel = True
+   Me.Undo
+   Exit Sub
+End If
+End Sub
+
+
+
+
+
+
+
+Private Sub MakeEffectiveBy_BeforeUpdate(Cancel As Integer)
+
+If [TargetCompletionDate] < [DateIssued] Then
+MsgBox ("The Target Completion Date cannot be prior to the Date Issued.")
+Cancel = True
+
+End If
+
+If IsNull([TargetCompletionDate]) Then
+MsgBox ("You must enter the Target Completion  Date.")
+Cancel = True
+Me.Undo
+End If
+
+End Sub
+
+
+Private Sub QADocLogIn_BeforeUpdate(Cancel As Integer)
+
+If IsNull([CompletionDate]) And [QAResponsible] <> "" Then
+MsgBox ("You cannot log this document in because " & QAResponsible & " did not input the Completion Date for review.")
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([CompletionDate]) And IsNull([QAResponsible]) Then
+MsgBox ("This document has no record of undergoing QA review; therefore, it cannot be logged back in.")
+Cancel = True
+Me.Undo
+
+Else
+
+
+If [QADocLogIn] > Date Then
+MsgBox ("The Date Logged In cannot be greater than today's date.")
+Cancel = True
+Me.Undo
+
+Else
+
+If [QADocLogIn] < [CompletionDate] Then
+MsgBox ("The Date Logged In cannot be prior to the QA review Completion Date.")
+Cancel = True
+Me.Undo
+
+
+End If
+End If
+End If
+End If
+End Sub
+
+Private Sub QAResponsible_AfterUpdate()
+If [QAResponsible] = "N/A - Research & Development Doc." Then
+[QADateLoggedIn] = Date
+[CompletionDate] = Date
+
+Else
+If [QAResponsible] <> "N/A - Research & Development Doc." Then
+MsgBox ("The information you are trying to enter can only be entered by a QA associate. If this is an R&D document, you must select N/A - Research & Development Doc. for this field.")
+Cancel = True
+Me.Undo
+End If
+End If
+End Sub
+
+Private Sub QAResponsible_BeforeUpdate(Cancel As Integer)
+If [QAResponsible] <> "N/A - Research & Development Doc." Then
+MsgBox ("The information you are trying to enter can only be entered by a QA associate. If this is an R&D document, you must select N/A - Research & Development Doc. for this field.")
+Cancel = True
+Me.Undo
+
+
+End If
+End Sub

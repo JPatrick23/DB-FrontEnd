@@ -1,0 +1,52 @@
+Private Sub Command39_Click()
+Application.Quit
+End Sub
+
+Private Sub Form_Current()
+If Me.NewRecord Then
+        Me![Accession].SetFocus
+    End If
+End Sub
+
+Private Sub Form_Error(DataErr As Integer, Response As Integer)
+If DataErr = 2237 Then
+   Response = acDataErrContinue
+   MsgBox "The information you are trying to enter is not available in the system.", vbOKOnly, "Not a Selectable Data Type"
+   Cancel = True
+
+
+   Else
+
+   If DataErr = 2113 Then
+   Response = acDataErrContinue
+   MsgBox "You must enter a date in this field.", vbOKOnly, "Wrong Data Type Entered"
+   Cancel = True
+
+   Else
+
+Const INPUTMASK_VIOLATION = 2279
+   If DataErr = INPUTMASK_VIOLATION Then
+      MsgBox "Incorrect Sample Number format"
+      Response = acDataErrContinue
+      Cancel = True
+      Me.Undo
+   End If
+    End If
+   End If
+End Sub
+
+
+
+
+
+
+
+Private Sub Form_Open(Cancel As Integer)
+Dim lWin As Long
+lWin = apiShowWindow(Application.hWndAccessApp, 0)
+End Sub
+
+Private Sub Form_Timer()
+DoCmd.Close acForm, "TSTBREntry_Form", acSaveNo
+DoCmd.CloseDatabase
+End Sub

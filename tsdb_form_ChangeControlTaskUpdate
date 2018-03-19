@@ -1,0 +1,47 @@
+Option Compare Database
+
+
+
+Private Sub Form_BeforeUpdate(Cancel As Integer)
+If IsNull([Activity]) Then
+MsgBox "You must enter the Activity associated with this plan."
+Cancel = True
+
+
+Else
+
+If IsNull([ResponsibleDepartment]) Then
+MsgBox "You must select the Responsible Department associated with this plan."
+Cancel = True
+
+Else
+
+
+
+If IsNull([TargetCompletionDate]) Then
+MsgBox "You must enter the Target Completion Date for this plan."
+Cancel = True
+
+
+
+End If
+End If
+End If
+End Sub
+
+Private Sub Form_Error(DataErr As Integer, Response As Integer)
+If DataErr = 2113 Then
+   Response = acDataErrContinue
+   MsgBox "You must enter a date in this field.", vbOKOnly, "Wrong Data Type Entered"
+   Cancel = True
+
+
+   Else
+
+  If DataErr = 2237 Then
+   Response = acDataErrContinue
+   MsgBox "This information is not available in the drop down list as selectable option.", vbOKOnly, "Data Doesn't Exist"
+   Cancel = True
+   End If
+   End If
+End Sub

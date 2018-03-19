@@ -1,0 +1,223 @@
+Private Sub CDCaseNumber_BeforeUpdate(Cancel As Integer)
+If [RecordType] <> "Electronic File on CD" Then
+MsgBox ("CD Case Numbers are only associated with archiving the Electronic Files on CD Record Type.")
+Cancel = True
+Me.Undo
+
+
+
+
+End If
+
+End Sub
+
+Private Sub CDNumber_BeforeUpdate(Cancel As Integer)
+If [RecordType] <> "Electronic File on CD" Then
+MsgBox ("CD Numbers are only associated with archiving the Electronic Files on CD Record Type.")
+Cancel = True
+Me.Undo
+
+
+End If
+End Sub
+
+
+
+Private Sub DateArchivedOffSite_BeforeUpdate(Cancel As Integer)
+
+If [DateArchivedOffSite] > Date Then
+MsgBox ("The Date Archived Off Site cannot be greater than today's date.")
+Cancel = True
+
+Else
+
+
+
+If DateArchivedOffSite < DateArchivedOnSite Then
+MsgBox ("The Date Archived Off Site cannot be prior to the Date Archived On Site.")
+Cancel = True
+
+End If
+End If
+
+End Sub
+
+Private Sub DateArchivedOnSite_BeforeUpdate(Cancel As Integer)
+If [DateArchivedOnSite] > Date Then
+MsgBox ("The Date Archived On Site cannot be greater than today's date.")
+Cancel = True
+
+Else
+
+If DateArchivedOffSite < DateArchivedOnSite Then
+MsgBox ("The Date Archived On Site cannot be after the Date Archived Off Site.")
+Cancel = True
+
+
+
+End If
+End If
+End Sub
+
+Private Sub Form_BeforeUpdate(Cancel As Integer)
+
+If IsNull([Site]) Then
+MsgBox ("You must select a Site.  This information will be used to help you search and find this record for loaning purposes.")
+Cancel = True
+
+Else
+
+If IsNull([RecordType]) Then
+MsgBox ("You must select a Record Type.  This information will be used to help you search and find this record for loaning purposes.")
+Cancel = True
+Else
+
+If IsNull([PrimaryRecordID]) Then
+MsgBox ("You must identify the Primary Record ID1.  This information will be used to help you search and find this record for loaning purposes.")
+Cancel = True
+
+Else
+
+If IsNull([PrimaryRecordID2]) Then
+MsgBox ("You must identify the Primary Record ID2.  This information will be used to help you search and find this record for loaning purposes.")
+Cancel = True
+
+Else
+
+If IsNull([Shelf Location]) Then
+MsgBox ("You must identify the Shelf Location if Applicable.  If there is no Shelf Location associated, input N/A.  This information will be used to help you search and find this record for loaning purposes.")
+Cancel = True
+
+Else
+
+If IsNull([Folder]) Then
+MsgBox ("You must identify the Folder.  If there is no Folder associated, input N/A.  This information will be used to help you search and find this record for loaning purposes.")
+Cancel = True
+
+Else
+
+If IsNull([VolumeNumber]) Then
+MsgBox ("You must identify the Vol./Folder Set Number.  If there is no Volume or Folder Set associated, input N/A.  This information will be used to help you search and find this record for loaning purposes.")
+Cancel = True
+
+Else
+
+If IsNull([Client]) Then
+MsgBox ("You must select the Client Associated with this record.  This information will be used to help you search and find this record for loaning purposes.")
+Cancel = True
+
+Else
+
+If IsNull([ArchivistComments]) Then
+MsgBox ("You must enter any comments you have unless it is not applicable.  Enter N/A if not applicable.  This information will be used to help you search and find this record for loaning purposes.")
+Cancel = True
+
+
+
+Else
+If IsNull([DateArchivedOnSite]) And IsNull([DateArchivedOffSite]) Then
+MsgBox ("You must enter a date on which this record was archived.  The date should be entered in the Date Archived On Site or Date Archived Off Site field.")
+Cancel = True
+
+Else
+
+If IsNull([IMBox#]) And [DateArchivedOffSite] <> "" Then
+MsgBox ("You must enter the IMBox# for records going off site.")
+Cancel = True
+
+Else
+
+If IsNull([IMSKU#]) And [DateArchivedOffSite] <> "" Then
+MsgBox ("You must enter the IMSKU# for records going off site.")
+Cancel = True
+
+Else
+
+If [IMBox#] <> "" And IsNull([DateArchivedOffSite]) Then
+MsgBox ("An IMBox# has been entered.  You must enter the date this record will be sent off site.")
+Cancel = True
+
+Else
+
+If [IMSKU#] <> "" And IsNull([DateArchivedOffSite]) Then
+MsgBox ("An IMSKU# has been entered.  You must enter the date this record will be sent off site.")
+Cancel = True
+
+Else
+If [RecordType] = "Electronic File on CD" And IsNull([CDCaseNumber]) Then
+MsgBox ("You must identify the CD Case Number for an Electronic File on CD.")
+Cancel = True
+
+Else
+If [RecordType] = "Electronic File on CD" And IsNull([CDNumber]) Then
+MsgBox ("You must identify the CD Case Number for an Electronic File on CD.")
+Cancel = True
+
+Else
+
+If DataErr = 2237 Then
+   Response = acDataErrContinue
+   MsgBox "The information you are trying to enter does not exist as a selectable option in this system.", vbOKOnly, "Not a Selectable Data Type"
+   Cancel = True
+
+Else
+
+If DataErr = 2113 Then
+   Response = acDataErrContinue
+   MsgBox "You must enter a date in this field.", vbOKOnly, "Wrong Data Type Entered"
+   Cancel = True
+
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End Sub
+
+
+
+
+Private Sub Form_Error(DataErr As Integer, Response As Integer)
+If DataErr = 2237 Then
+   Response = acDataErrContinue
+   MsgBox "The information you are trying to enter does not exist as a selectable option in this system.", vbOKOnly, "Not a Selectable Data Type"
+   Cancel = True
+
+  Else
+
+
+
+   If DataErr = 2113 Then
+   Response = acDataErrContinue
+   MsgBox "You must enter a date in this field.", vbOKOnly, "Wrong Data Type Entered"
+   Cancel = True
+
+
+
+   Exit Sub
+   End If
+End If
+End Sub
+
+Private Sub RecordType_BeforeUpdate(Cancel As Integer)
+If [RecordType] <> "Electronic File on CD" And [CDCaseNumber] <> "" Or [CDNumber] <> "" Then
+MsgBox ("You cannot change this Record Type from Electronic File on CD because there is a CD Case Number and/or a CD Number associated for the archive location.")
+Cancel = True
+Me.Undo
+
+
+End If
+End Sub

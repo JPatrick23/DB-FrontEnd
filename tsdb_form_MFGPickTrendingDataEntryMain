@@ -1,0 +1,49 @@
+Option Compare Database
+
+Private Sub Command3_Click()
+Client = ""
+End Sub
+
+Private Sub Command4_Click()
+DoCmd.Close
+DoCmd.OpenForm "Login_Form"
+End Sub
+
+Private Sub Command6_Click()
+
+On Error GoTo Command6_Click_Err
+DoCmd.OpenReport "MFGProcessScheduling_HitTarget_Graph", acPrintReport
+    Exit Sub
+
+Command6_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command8_Click()
+On Error GoTo Command8_Click_Err
+DoCmd.OpenReport "MFGPickList_HitTarget_Graph", acPrintReport
+
+    Exit Sub
+
+Command8_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Form_Error(DataErr As Integer, Response As Integer)
+If DataErr = 2237 Then
+   Response = acDataErrContinue
+   MsgBox "The information you are trying to enter is not available in the system.", vbOKOnly, "Not a Selectable Data Type"
+   Cancel = True
+   Me.Undo
+   End If
+End Sub

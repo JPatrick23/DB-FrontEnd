@@ -1,0 +1,131 @@
+Option Compare Database
+
+
+
+Private Sub Activity_BeforeUpdate(Cancel As Integer)
+If IsNull([Activity]) And ResponsibleDepartment <> "" Then
+MsgBox "You must enter the Activity for ths Implementation Plan because you have identified the responsible Department."
+Cancel = True
+End If
+End Sub
+
+Private Sub ClosureDate_BeforeUpdate(Cancel As Integer)
+If ClosureDate < Form_ChangeControlInitiation_Form.DateInitiated Then
+MsgBox "The Implementation Plan Closure Date cannot be prior to the Initiation Date of the Change Control."
+Cancel = True
+
+Else
+
+If ClosureDate > Form_ChangeControlInitiation_Form.ClosureDate Then
+MsgBox "The Implementation Plan Closure Date cannot be after to the Date Closed of the Change Control."
+Cancel = True
+
+Else
+
+If ClosureDate > Form_ChangeControlInitiation_Form.VerificationDue Then
+MsgBox "The Implementation Plan Closure Date cannot be after to the Verification Due Date of the Change Control."
+Cancel = True
+
+Else
+
+If ClosureDate > Form_ChangeControlInitiation_Form.VerificationClosed Then
+MsgBox "The Implementation Plan Closure Date cannot be after to the Verification Closure Date of the Change Control."
+Cancel = True
+
+
+End If
+End If
+End If
+End If
+End Sub
+
+
+
+Private Sub DueDate_BeforeUpdate(Cancel As Integer)
+If DueDate < Form_ChangeControlInitiation_Form.DateInitiated Then
+MsgBox "The Implementation Plan Closure Date cannot be prior to the Initiation Date of the Change Control."
+Cancel = True
+
+
+Else
+
+If DueDate > Form_ChangeControlInitiation_Form.VerificationDue Then
+MsgBox "The Implementation Plan Due Date cannot be after to the Verification Due Date of the Change Control."
+Cancel = True
+
+Else
+
+If DueDate > Form_ChangeControlInitiation_Form.VerificationClosed Then
+MsgBox "The Implementation Plan Due Date cannot be after to the Verification Closure Date of the Change Control."
+Cancel = True
+
+Else
+
+If DueDate > Form_ChangeControlInitiation_Form.ClosureDate Then
+MsgBox "The Implementation Plan Due Date cannot be after to the Closure Date of the Change Control."
+Cancel = True
+
+
+End If
+End If
+End If
+End If
+End Sub
+
+Private Sub Form_BeforeUpdate(Cancel As Integer)
+If IsNull([Activity]) And ResponsibleDepartment <> "" Then
+MsgBox "You must enter the Activity associated with this plan."
+Cancel = True
+
+
+Else
+
+If Activity <> "" And IsNull([ResponsibleDepartment]) Then
+MsgBox "You must select the Responsible Department associated with this plan."
+Cancel = True
+
+Else
+
+
+
+
+If IsNull([Activity]) And ResponsibleDepartment <> "" Then
+MsgBox "You must enter the Activity associated with this plan."
+Cancel = True
+
+Else
+
+
+If IsNull([Activity]) Then
+MsgBox "You must enter the Activity for this plan."
+Cancel = True
+
+Else
+
+If IsNull([TargetCompletionDate]) Then
+MsgBox "You must enter the Target Completion Date for this plan."
+Cancel = True
+
+End If
+End If
+End If
+End If
+End If
+End Sub
+
+Private Sub Form_Error(DataErr As Integer, Response As Integer)
+If DataErr = 2237 Then
+   Response = acDataErrContinue
+   MsgBox "This information is not available in the drop down list as selectable option.", vbOKOnly, "Data Doesn't Exist"
+   Cancel = True
+
+   Else
+
+   If DataErr = 2113 Then
+   Response = acDataErrContinue
+   MsgBox "You must enter a date in this field.", vbOKOnly, "Wrong Data Type Entered"
+   Cancel = True
+
+   End If
+   End If
+End Sub

@@ -1,0 +1,31 @@
+Option Compare Database
+
+
+
+
+
+Private Sub CompletedAllTraining_BeforeUpdate(Cancel As Integer)
+If [AssignedtoProcess] = True And [CompletedAllTraining] = False Then
+MsgBox "You cannot have the 'Assigned to Process' checked and the 'Completed All Training' unchecked.  If you need to uncheck the 'Completed All Training' box, then you must first uncheck the 'Assigned to Process' box."
+Cancel = True
+Me.Undo
+End If
+End Sub
+
+Private Sub Form_BeforeUpdate(Cancel As Integer)
+If IsNull([Operator]) Then
+MsgBox "You must firt select and Operator to be associated with this training information, before you can check the appropriate options."
+Cancel = True
+Me.Undo
+End If
+End Sub
+
+Private Sub Form_Error(DataErr As Integer, Response As Integer)
+If DataErr = 3022 Then
+   Response = acDataErrContinue
+   MsgBox "" & Operator & " can only have one line item for the Training Completion & Process Assignment for " & Client & ", Process: " & Process & ", BR: " & Protocol & "."
+   Cancel = True
+   Me.Undo
+   Exit Sub
+End If
+End Sub

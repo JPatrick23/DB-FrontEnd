@@ -1,0 +1,21 @@
+Option Compare Database
+
+Private Sub Form_BeforeUpdate(Cancel As Integer)
+If IsNull([RelatedNumber]) Then
+MsgBox ("You have not Generated a CAPA Number for this record.  You must Generate a CAPA Number prior to entering any Related NCEs.")
+Cancel = True
+Me.Undo
+End If
+End Sub
+
+Private Sub Form_Error(DataErr As Integer, Response As Integer)
+If DataErr = 2237 Then
+   Response = acDataErrContinue
+   MsgBox "The NCE Number you have entered is not available in the system..", vbOKOnly, "Data Doesn't Exist"
+   Cancel = True
+   RelatedNCE = ""
+
+   Exit Sub
+
+ End If
+End Sub

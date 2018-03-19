@@ -1,0 +1,2 @@
+Option Compare Database
+Declare Function apiShowWindow Lib "user32" Alias "ShowWindow" (ByVal hWnd As Long, ByVal nCmdShow As Long) As Long

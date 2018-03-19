@@ -1,0 +1,422 @@
+Private Sub AddNewCAPA_Click()
+On Error GoTo Err_AddNewCAPA_Click
+
+
+    DoCmd.GoToRecord , , acNewRec
+  If IsNull(CAPANumber) = True Then
+            CAPANumber = NewSeqNumber(Prefix.Value)
+            DoCmd.DoMenuItem acFormBar, acRecordsMenu, acSaveRecord, , acMenuVer70
+            Me.DateRequested = Date
+            Me.SiteLocation = "PHL"
+            Me.ClosureDueDate = DateRequested + 30
+    End If
+Exit_AddNewCAPA_Click:
+    Exit Sub
+
+Err_AddNewCAPA_Click:
+    MsgBox Err.Description
+    Resume Exit_AddNewCAPA_Click
+End Sub
+
+
+
+Private Sub Command51_Click()
+
+If IsNull([CAPANumber]) Then
+MsgBox ("A CAPA Number has not been assigned.  No information will be saved.")
+DoCmd.RunMacro "CloseCAPAInitiationForm_Macro"
+
+
+Else
+
+DoCmd.RunMacro "CloseCAPAInitiationForm_Macro"
+
+End If
+
+End Sub
+
+Private Sub Command97_Click()
+On Error GoTo Err_AddNewCAPA_Click
+
+
+    DoCmd.GoToRecord , , acNewRec
+  If IsNull(CAPANumber) = True Then
+            CAPANumber = NewSeqNumber(Prefix.Value)
+            DoCmd.DoMenuItem acFormBar, acRecordsMenu, acSaveRecord, , acMenuVer70
+            Me.SiteLocation = "PHL"
+
+    End If
+Exit_AddNewCAPA_Click:
+    Exit Sub
+
+Err_AddNewCAPA_Click:
+    MsgBox Err.Description
+    Resume Exit_AddNewCAPA_Click
+End Sub
+
+Private Sub CAPAClosureDate_BeforeUpdate(Cancel As Integer)
+
+If [DateCancelled] <> "" Then
+MsgBox ("This CAPA has been cancelled; therefore, you cannot enter the CAPA Closure Date.")
+Cancel = True
+Me.Undo
+
+
+
+Else
+
+If [CAPAClosureDate] > Date Then
+MsgBox ("You cannot enter a future date for the CAPA Closure Date.")
+Cancel = True
+Me.Undo
+
+Else
+
+If [CAPAClosureDate] < [DateRequested] Then
+MsgBox ("The CAPA Closure Date cannot be prior to the Date Requested.")
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([ClosureDueDate]) Then
+MsgBox ("You cannot enter the CAPA Closure Date because the Due for Closure field is empty.")
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([DateRequested]) Then
+MsgBox ("You cannot enter the CAPA Closure Date because the Date Requested field is empty.")
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([RequestedBy]) Then
+MsgBox ("You cannot enter the CAPA Closure Date because the Requested By field is empty.")
+Cancel = True
+Me.Undo
+
+
+Else
+
+If IsNull([Department]) Then
+MsgBox ("You cannot enter the CAPA Closure Date because the Department field is empty.")
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([SourceofIssue]) Then
+MsgBox ("You cannot enter the CAPA Closure Date because the Source of Issue field is empty.")
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([OtherSourceofIssue]) Then
+MsgBox ("You cannot enter the CAPA Closure Date because the Other Source of Issue field is empty.  If there is no Other Source of Issue, type N/A.")
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([WhatistheNonconformity]) Then
+MsgBox ("You cannot enter the CAPA Closure Date because the 'What is the Nonconformity' field is empty.")
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([BasedonWhatEvidence]) Then
+MsgBox ("You cannot enter the CAPA Closure Date because the 'Based on What Evidence' field is empty.")
+Cancel = True
+Me.Undo
+
+
+Else
+
+If IsNull([WhatistheRequirement]) Then
+MsgBox ("You cannot enter the CAPA Closure Date because the 'What is the Requirement' field is empty.")
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([EscalationtoCAPA]) Then
+MsgBox ("You cannot enter the CAPA Closure Date because Yes or No has not been selected for the Escalation to CAPA field.")
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([JustificationforEscalation]) Then
+MsgBox ("You cannot enter the CAPA Closure Date because the Justification for Escalation field is empty.  If there is no Justification for Escalation, type N/A.")
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([ContainmentCorrection]) Then
+MsgBox ("You cannot enter the CAPA Closure Date because the Containment/Correction field is empty.  If there is no Containment/Correction, type N/A.")
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([QAReviewer]) Then
+MsgBox ("You cannot enter the CAPA Closure Date until the QA Reviewer is selected or entered above.")
+Cancel = True
+Me.Undo
+
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End Sub
+
+Private Sub ClosureDueDate_BeforeUpdate(Cancel As Integer)
+If [ClosureDueDate] < [DateRequested] Then
+MsgBox "The Due for Closure Date cannot be prior to the Date CAPA was requested."
+Cancel = True
+Me.Undo
+End If
+End Sub
+
+Private Sub DateCancelled_BeforeUpdate(Cancel As Integer)
+If [DateCancelled] > Date Then
+MsgBox ("The Date Cancelled cannot be a future date.")
+Cancel = True
+Me.Undo
+
+Else
+
+If [CAPAClosureDate] <> "" Then
+MsgBox ("You cannot cancel this CAPA since a date exists in the CAPA Closure Date field.")
+Cancel = True
+Me.Undo
+
+Else
+
+If [DateCancelled] < [DateRequested] Then
+MsgBox ("The Date Cancelled cannot be prior to the Date Requested.")
+Cancel = True
+Me.Undo
+
+
+End If
+End If
+End If
+End Sub
+
+Private Sub DateRequested_BeforeUpdate(Cancel As Integer)
+If [DateRequested] > Date Then
+MsgBox ("The Date Requested cannot be greater than today's date.")
+Cancel = True
+
+End If
+End Sub
+
+Private Sub Department_BeforeUpdate(Cancel As Integer)
+If [Department] = "Manufacturing" Then
+MsgBox "You must select one of the available Manufacturing sub groups."
+Cancel = True
+End If
+End Sub
+
+Private Sub Form_Error(DataErr As Integer, Response As Integer)
+
+   If DataErr = 2237 Then
+   Response = acDataErrContinue
+   MsgBox "The information you are trying to enter is not available in the system.", vbOKOnly, "Not a Selectable Data Type"
+   Cancel = True
+
+   Else
+
+   If DataErr = 2113 Then
+   Response = acDataErrContinue
+   MsgBox "You must enter a date in this field.", vbOKOnly, "Wrong Data Type Entered"
+   Cancel = True
+
+   End If
+   End If
+End Sub
+
+Private Sub Form_Load()
+DoCmd.GoToRecord , , acNewRec
+End Sub
+
+
+
+Private Sub ReasonCancelled_BeforeUpdate(Cancel As Integer)
+If [CAPAClosureDate] <> "" Then
+MsgBox ("You cannot enter the Reason Cancelled because you have entered the CAPA Closure Date.")
+Cancel = True
+Me.Undo
+
+End If
+End Sub
+
+Private Sub SaveandCloseCAPA_Click()
+
+If [DateCancelled] <> "" And IsNull([ReasonCancelled]) Then
+MsgBox ("You have entered a Date Cancelled for this CAPA, but did not enter the Reason Cancelled.  You must enter the Reason Cancelled before you can save this record.")
+Cancel = True
+
+Else
+
+If IsNull([DateCancelled]) And [ReasonCancelled] <> "" Then
+MsgBox ("You have entered a Reason Cancelled for this CAPA, but did not enter the Date Cancelled.  You must enter the Date Cancelled before you can save this record.")
+Cancel = True
+
+
+Else
+
+If IsNull([CAPANumber]) Then
+MsgBox ("A CAPA Number has not been assigned.  No information will be saved.")
+DoCmd.Close
+
+Else
+
+If [SourceofIssue] = "Other" And IsNull([OtherSourceofIssue]) Then
+MsgBox ("You have selected 'Other' for Source of Issue; Therefore, you must enter the Other Source of Issue.")
+Cancel = True
+
+Else
+
+If [SourceofIssue] = "Other" And [OtherSourceofIssue] = "N/A" Then
+MsgBox ("You have selected 'Other' for Source of Issue; Therefore, you must enter the Other Source of Issue and it cannot be N/A.")
+Cancel = True
+
+Else
+
+If [SourceofIssue] = "Other" And [OtherSourceofIssue] = "NA" Then
+MsgBox ("You have selected 'Other' for Source of Issue; Therefore, you must enter the Other Source of Issue and it cannot be NA.")
+Cancel = True
+
+Else
+
+If [SourceofIssue] = "Other" And [OtherSourceofIssue] = "Not Applicable" Then
+MsgBox ("You have selected 'Other' for Source of Issue; Therefore, you must enter the Other Source of Issue and it cannot be Not Applicable.")
+Cancel = True
+
+Else
+
+If [SourceofIssue] = "Other" And [OtherSourceofIssue] = "not applicable" Then
+MsgBox ("You have selected 'Other' for Source of Issue; Therefore, you must enter the Other Source of Issue and it cannot be Not Applicable.")
+Cancel = True
+
+Else
+
+If [SourceofIssue] = "Other" And [OtherSourceofIssue] = "Non Applicable" Then
+MsgBox ("You have selected 'Other' for Source of Issue; Therefore, you must enter the Other Source of Issue and it cannot be Non Applicable.")
+Cancel = True
+
+Else
+
+If [SourceofIssue] = "Other" And [OtherSourceofIssue] = "non applicable" Then
+MsgBox ("You have selected 'Other' for Source of Issue; Therefore, you must enter the Other Source of Issue and it cannot be Non Applicable.")
+Cancel = True
+
+
+Else
+
+If [EscalationtoCAPA] = "Yes" And IsNull([JustificationforEscalation]) Then
+MsgBox ("You have selected 'Yes' for Escalation to CAPA; Therefore, you must enter the Justification for Escalation.")
+Cancel = True
+
+Else
+
+If [EscalationtoCAPA] = "Yes" And [JustificationforEscalation] = "N/A" Then
+MsgBox ("You have selected 'Yes' for Escalation to CAPA; Therefore, you must enter the Justification for Escalation and it cannot be N/A.")
+Cancel = True
+
+Else
+
+If [EscalationtoCAPA] = "Yes" And [JustificationforEscalation] = "NA" Then
+MsgBox ("You have selected 'Yes' for Escalation to CAPA; Therefore, you must enter the Justification for Escalation and it cannot be NA.")
+Cancel = True
+
+Else
+
+If [EscalationtoCAPA] = "Yes" And [JustificationforEscalation] = "Not Applicable" Then
+MsgBox ("You have selected 'Yes' for Escalation to CAPA; Therefore, you must enter the Justification for Escalation and it cannot be Not Applicable.")
+Cancel = True
+
+Else
+
+If [EscalationtoCAPA] = "Yes" And [JustificationforEscalation] = "not applicable" Then
+MsgBox ("You have selected 'Yes' for Escalation to CAPA; Therefore, you must enter the Justification for Escalation and it cannot be Not Applicable.")
+Cancel = True
+
+Else
+
+If [EscalationtoCAPA] = "Yes" And [JustificationforEscalation] = "Non Applicable" Then
+MsgBox ("You have selected 'Yes' for Escalation to CAPA; Therefore, you must enter the Justification for Escalation and it cannot be Non Applicable.")
+Cancel = True
+
+Else
+
+If [EscalationtoCAPA] = "Yes" And [JustificationforEscalation] = "non applicable" Then
+MsgBox ("You have selected 'Yes' for Escalation to CAPA; Therefore, you must enter the Justification for Escalation and it cannot be Non Applicable.")
+Cancel = True
+
+
+Else
+
+DoCmd.Close
+
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End Sub
+
+Private Sub SearchCAPANumber_AfterUpdate()
+Me.Filter = "[CAPANumber] Like '*" & [SearchCAPANumber] & "*'"
+Me.FilterOn = True
+'Me.[CAPANumber].SetFocus
+'DoCmd.FindRecord Me.SearchCAPANumber, acAnywhere, , acSearchAll, , acAll, True
+End Sub
+
+
+Private Sub SearchCAPANumber_LostFocus()
+Me.SearchCAPANumber = ""
+End Sub
+
+Private Sub Text91_AfterUpdate()
+Me.Filter = "[CAPANumber] Like '*" & [SearchCAPANumber] & "*'"
+Me.FilterOn = True
+'Me.[CAPANumber].SetFocus
+'DoCmd.FindRecord Me.SearchCAPANumber, acAnywhere, , acSearchAll, , acAll, True
+End Sub
+
+Private Sub Text91_LostFocus()
+Me.SearchCAPANumber = ""
+End Sub

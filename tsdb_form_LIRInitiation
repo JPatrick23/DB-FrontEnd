@@ -1,0 +1,357 @@
+Private Sub AddNewLIR_Click()
+On Error GoTo Err_AddNewLIR_Click
+
+
+    DoCmd.GoToRecord , , acNewRec
+  If IsNull(LIRNumber) = True Then
+            LIRNumber = NewSeqNumber(Prefix.Value)
+            DoCmd.DoMenuItem acFormBar, acRecordsMenu, acSaveRecord, , acMenuVer70
+            Me.SiteLocation = "PHL"
+            DateIssued = Date
+            ClosureDueDate = DateIssued + 30
+    End If
+Exit_AddNewLIR_Click:
+    Exit Sub
+
+Err_AddNewLIR_Click:
+    MsgBox ("You cannot generate a new LIR Number while fields within this form are populated with information.")
+    Cancel = True
+    Me.Undo
+    Resume Exit_AddNewLIR_Click
+
+End Sub
+
+Private Sub ClosureDueDate_BeforeUpdate(Cancel As Integer)
+If [ClosureDueDate] < Date Then
+MsgBox ("You cannot back date the Closure Due Date.")
+Cancel = True
+End If
+End Sub
+
+Private Sub EventDiscoveredDate_BeforeUpdate(Cancel As Integer)
+If [EventDiscoveredDate] > Date Then
+MsgBox ("You cannot enter a future date for the Event Discovered Date.")
+Cancel = True
+
+Else
+
+If [EventDiscoveredDate] < Date - 5 Then
+MsgBox ("You cannot enter a back date of more than 5 days ago for the Event Discovered Date.")
+Cancel = True
+
+End If
+End If
+End Sub
+
+Private Sub EventOccurredDate_BeforeUpdate(Cancel As Integer)
+If [EventOccurredDate] > Date Then
+MsgBox ("You cannot enter a future date for the Event Occurred Date.")
+Cancel = True
+
+Else
+
+If [EventOccurredDate] < Date - 5 Then
+MsgBox ("You cannot enter a back date of more than 5 days ago for the Event Occurred Date.")
+Cancel = True
+
+End If
+End If
+End Sub
+
+
+Private Sub DateCancelled_BeforeUpdate(Cancel As Integer)
+If [LIRClosureDate] <> "" Then
+MsgBox ("You cannot cancel this LIR since the LIR Closure Date has been entered.  To cancell, you must first remove the LIR Closure Date.")
+Cancel = True
+Me.Undo
+Else
+
+If [LIRClosureDate] <> "" Then
+MsgBox ("You cannot enter the date cancelled because you have already entered the LIR Closure Date.")
+Cancel = True
+Me.Undo
+
+End If
+End If
+End Sub
+
+Private Sub DateIssued_AfterUpdate()
+ClosureDueDate = DateIssued + 45
+End Sub
+
+Private Sub DateIssued_BeforeUpdate(Cancel As Integer)
+
+
+If [DateIssued] > Date Then
+MsgBox ("You cannot enter a future date for the Date Issued.")
+Cancel = True
+
+
+Else
+
+If [DateIssued] < [DateofDiscovery] Then
+MsgBox ("The Date Issued cannot be prior to the Date of Discovery.")
+Cancel = True
+
+End If
+End If
+End Sub
+
+Private Sub DateofDiscovery_BeforeUpdate(Cancel As Integer)
+If [DateofDiscovery] > [DateIssued] Then
+MsgBox "The Date of Discovery cannot occur after the Date Issued."
+Cancel = True
+End If
+End Sub
+
+Private Sub Form_Error(DataErr As Integer, Response As Integer)
+If DataErr = 3058 Then
+   Response = acDataErrContinue
+   MsgBox "You must select an LIR Number prior to updating this information. The information you have entered will not be saved.", vbOKOnly, "Duplicate Entry Error"
+   Me.Undo
+
+   Else
+
+
+   If DataErr = 2169 Then
+   Response = acDataErrContinue
+   MsgBox "Your recent updates will not be saved.", vbOKOnly, "Missing Data"
+   Cancel = True
+
+
+   Else
+   If DataErr = 2237 Then
+   Response = acDataErrContinue
+   MsgBox "This information is not available in the drop down list as selectable option.", vbOKOnly, "Data Doesn't Exist"
+   Cancel = True
+
+   Else
+
+   If DataErr = 2113 Then
+   Response = acDataErrContinue
+   MsgBox "You must enter a date in this field.", vbOKOnly, "Wrong Data Type Entered"
+   Cancel = True
+
+  Else
+
+  Const INPUTMASK_VIOLATION = 2279
+      If DataErr = INPUTMASK_VIOLATION Then
+         MsgBox "The LIR Number must be in the format of LIRYYNNNN."
+         Response = acDataErrContinue
+         Me.Undo
+
+
+
+   Exit Sub
+End If
+ End If
+ End If
+ End If
+ End If
+End Sub
+
+Private Sub Form_Load()
+
+ DoCmd.GoToRecord , , acNewRec
+
+End Sub
+
+
+
+
+
+
+Private Sub QAClosureDate_BeforeUpdate(Cancel As Integer)
+If [QAApprovalClosureDate] > Date Then
+MsgBox ("You cannot enter a future date for the QA Approval/Closure Date.")
+Cancel = True
+
+Else
+
+If [QAApprovalClosureDate] < Date - 3 Then
+MsgBox ("You cannot enter a back date of more than 3 days ago for the QA Approval/Closure Date.")
+Cancel = True
+
+Else
+
+If IsNull([ClosureDueDate]) Or IsNull([EventOccurredDate]) Or IsNull([Initiator]) Or IsNull([EventDiscoveredDate]) Or IsNull([EventDiscoveredBy]) Or IsNull([StudyDirector/AreaManager]) Or IsNull([EventType]) Or IsNull([OtherEventType]) Or IsNull([EffectedDepartment]) Or IsNull([Investigator]) Or IsNull([DescriptionofEvent]) Or IsNull([Correction]) Or IsNull([NCERiskLevel]) Or IsNull([Disposition]) Or IsNull([OtherDisposition]) Then
+MsgBox ("You have left one or more of the data fields on this form, up to Section 3, empty.  You cannot enter the QA Approval/Closure Date until all fields up to Section 3 have been completed.  Hit the Esc key to undo the date entry.")
+Cancel = True
+
+
+End If
+End If
+End If
+End Sub
+
+
+Private Sub LIRClosureDate_BeforeUpdate(Cancel As Integer)
+If [LIRClosureDate] > Date Then
+MsgBox ("You cannot enter a future date for the LIR Closure Date.")
+Cancel = True
+Me.Undo
+
+Else
+
+If [LIRClosureDate] < [DateIssued] Then
+MsgBox ("The LIR Closure Date cannot be prior to the Date Issued.")
+Cancel = True
+Me.Undo
+
+Else
+
+If [DateCancelled] <> "" Then
+MsgBox ("You cannot enter the LIR Closure Date because you have entered a date for Date Cancelled.  To enter the LIR Closure Date, you must first remove the Date Cancelled.")
+Cancel = True
+Me.Undo
+
+Else
+
+If [ReasonCancelled] <> "" Then
+MsgBox ("You cannot enter the LIR Closure Date because you have entered the Reason Cancelled.  To enter the LIR Closure Date, you must first remove the Reason Cancelled.")
+Cancel = True
+Me.Undo
+
+
+Else
+
+If IsNull([QAReviewer1]) Then
+MsgBox "You cannot enter the LIR Cosure Date until you have entered the QA Reviewer in Phase I of this LIR form."
+Cancel = True
+Me.Undo
+
+Else
+
+If IsNull([QAReviewer1ReviewDate]) Then
+MsgBox "You cannot enter the LIR Cosure Date until you have entered the QA Reviewer Reviewed Date in Phase I of this LIR form."
+Cancel = True
+Me.Undo
+
+
+Else
+
+If IsNull([QAReviewer2]) Then
+MsgBox "You cannot enter the LIR Cosure Date until you have entered the QA Reviewer in the field above."
+Cancel = True
+Me.Undo
+
+
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+
+End Sub
+
+Private Sub LIRNumber_Click()
+SendKeys "{Home}"
+End Sub
+
+Private Sub ReasonCancelled_BeforeUpdate(Cancel As Integer)
+If [LIRClosureDate] <> "" Then
+MsgBox ("You cannot cancel this LIR since the LIR Closure Date has been entered.  To cancell, you must first remove the LIR Closure Date.")
+Cancel = True
+Me.Undo
+
+End If
+End Sub
+
+Private Sub SaveLIR_Click()
+If IsNull([DateIssued]) And [LIRClosureDate] <> "" Then
+MsgBox ("You must enter the Date Issued prior to LIR closure.")
+Cancel = True
+
+Else
+
+If IsNull([DateofDiscovery]) And [LIRClosureDate] <> "" Then
+MsgBox ("You must enter the Date of Discovery prior to LIR closure.")
+Cancel = True
+
+Else
+
+If IsNull([InitiatedBy]) And [LIRClosureDate] <> "" Then
+MsgBox ("You must select whom the LIR was Initiated By prior to LIR closure.")
+Cancel = True
+
+Else
+
+If IsNull([Department]) And [LIRClosureDate] <> "" Then
+MsgBox ("You must select the Department the LIR was issued to prior to LIR closure.")
+Cancel = True
+
+Else
+
+
+If IsNull([StudyDirectorAreaManager]) And [LIRClosureDate] <> "" Then
+MsgBox ("You must select the Study Director / Area Manager associated with this LIR  prior to LIR closure.")
+Cancel = True
+
+Else
+
+If IsNull([CauseofInvestigation]) And [LIRClosureDate] <> "" Then
+MsgBox ("You must select the Cause of investigation for this LIR  prior to LIR closure.")
+Cancel = True
+
+Else
+
+If IsNull([LIRDescription]) And [LIRClosureDate] <> "" Then
+MsgBox ("You enter the LIR Description prior to LIR closure.")
+Cancel = True
+
+
+Else
+
+If IsNull([LIRNumber]) Then
+MsgBox ("An LIR Number has not been assigned.  No information will be saved.")
+DoCmd.Close
+
+Else
+
+If IsNull([CancelledBy]) And [ReasonCancelled] <> "" Then
+MsgBox ("You must select the name of the individual who cancelled the LIR since you have entered a reason for why this LIR has been cancelled.")
+Cancel = True
+
+Else
+
+
+If IsNull([CancelledBy]) And [DateCancelled] <> "" Then
+MsgBox ("You must select the name of the individual who cancelled the LIR since you have entered the Date LIR Cancelled.")
+Cancel = True
+
+Else
+
+If IsNull([DateCancelled]) And [CancelledBy] <> "" Then
+MsgBox ("You must enter the Date Cancelled since you have entered the person who cancelled this LIR.")
+Cancel = True
+
+Else
+
+
+DoCmd.Close
+
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End Sub
+
+Private Sub SearchLIRNumber_AfterUpdate()
+Me.Filter = "[LIRNumber] Like '*" & [SearchLIRNumber] & "*'"
+Me.FilterOn = True
+'Me.[LIRNumber].SetFocus
+'DoCmd.FindRecord Me.SearchLIRNumber, acAnywhere, , acSearchAll, , acAll, True
+End Sub
+
+Private Sub SearchLIRNumber_LostFocus()
+Me.SearchLIRNumber = ""
+End Sub

@@ -1,0 +1,40 @@
+Option Compare Database
+
+Private Sub Command44_Click()
+
+If IsNull([Client]) Or IsNull([Process]) Or IsNull([Protocol]) Then
+MsgBox "You are attempting to save this record, but have not selected a Client, Process and BR.  All three fields are required; therefore, the record will not be saved and closed."
+DoCmd.Close
+
+Else
+
+MsgBox "This record has been saved in the system.  You can still use the update form to enter associated Unit Operations, SOPs and Training information if you have not completed this coursework information already."
+DoCmd.Close
+
+End If
+
+End Sub
+
+
+
+Private Sub Form_Error(DataErr As Integer, Response As Integer)
+
+If DataErr = 2237 Then
+   Response = acDataErrContinue
+   MsgBox "The information you are trying to enter is not available in the system.", vbOKOnly, "Not a Selectable Data Type"
+   Cancel = True
+End If
+
+If DataErr = 3058 Then
+   Response = acDataErrContinue
+   MsgBox "You must enter the Client, Process and BR Number. The information you have entered will not be saved.", vbOKOnly, "Need Info"
+   Me.Undo
+End If
+
+If DataErr = 3022 Then
+   Response = acDataErrContinue
+   MsgBox "The record for Client: " & Client & ", Process: " & Process & ", and Protocol: " & Protocol & ", already exists in the system.  You can add Unit Operations or make changes to this record in the Update Form.", vbOKOnly, "Duplicate Info"
+   Me.Undo
+End If
+
+End Sub

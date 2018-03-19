@@ -1,0 +1,1125 @@
+Option Compare Database
+
+
+
+
+
+Private Sub Aborted_BeforeUpdate(Cancel As Integer)
+If IsNull([Site]) Then
+        MsgBox "The Site, Client, Department & Area Manager must be entered prior aborting this project."
+        Cancel = True
+        Me.Undo
+
+
+        Else
+
+        If IsNull([Client]) Then
+        MsgBox "The Site, Client, Department & Area Manager must be entered prior aborting this project."
+        Cancel = True
+        Cancel = True
+        Me.Undo
+
+        Else
+
+        If IsNull([Department]) Then
+        MsgBox "The Site, Client, Department & Area Manager must be entered prior aborting this project."
+        Cancel = True
+        Cancel = True
+        Me.Undo
+
+        Else
+        If IsNull([AreaManager]) Then
+        MsgBox "The Site, Client, Department & Area Manager must be entered prior aborting this project."
+        Cancel = True
+        Cancel = True
+        Me.Undo
+
+        End If
+        End If
+        End If
+        End If
+End Sub
+
+Private Sub Accession_Click()
+SendKeys "{Home}"
+End Sub
+
+
+
+Private Sub CoASignOffDate_BeforeUpdate(Cancel As Integer)
+If IsNull([DateCompletedInitialReview]) Then
+MsgBox "You cannot enter the CoA Sign Off Date until you have first entered the Initial Review Completion Date."
+Cancel = True
+Me.Undo
+
+Else
+
+If [CoASignOffDate] < [DateQASignedOff] Then
+MsgBox "The CoA Sign Off Date cannot be prior to the final QA review completion date."
+Cancel = True
+
+Else
+
+If [CoASignOffDate] < [DateCompletedInitialReview] Then
+MsgBox "The CoA Sign Off Date cannot be prior to the QA Initial Review Completion Date."
+Cancel = True
+
+End If
+End If
+End If
+End Sub
+
+Private Sub btnAddApptToOutlookMFGtoQA_Click()
+'On Error GoTo ErrHandle
+
+    Dim olNS As Object
+    Dim olApptFldr As Object
+
+    ' Save the Current Record
+    If Me.Dirty Then Me.Dirty = False
+
+    ' Exit the procedure if appointment has been added to Outlook.
+    If Me.chkAddedtoOutlookMFGtoQA = True Then
+        MsgBox "The Date Due to QA has already added to the Microsoft Outlook Calendar.", vbCritical
+        Exit Sub
+    Else
+
+        ' Use late binding to avoid the "Reference" issue
+        Dim olApp As Object        'Outlook.Application
+        Dim olAppt As Object        'olAppointmentItem
+
+        'This is how we would do it if we were using "early binding":
+'        Dim olApp As Outlook.Application
+'        Dim olappt As Outlook.AppointmentItem
+'        Set olapp = CreateObject("Outlook.Application")
+'        Set olappt = olapp.CreateItem(olAppointmentItem)
+
+        If isAppThere("Outlook.Application") = False Then
+            ' Outlook is not open, create a new instance
+            Set olApp = CreateObject("Outlook.Application")
+        Else
+            ' Outlook is already open--use this method
+            Set olApp = GetObject(, "Outlook.Application")
+        End If
+
+        Set olAppt = olApp.CreateItem(1) ' 1 = olAppointmentItem
+
+        ' Add the Form data to the Appointment Properties
+        With olAppt
+
+
+                ' Format the dates in the Form Controls
+                Me.DateDuetoQA = FormatDateTime(Me.DateDuetoQA, vbShortDate)
+
+
+
+
+                ' Get the Start and the End Dates
+                Dim dteTempEnd As Date
+                Dim dteStartDate As Date
+                Dim dteEndDate As Date
+                dteStartDate = CDate(FormatDateTime(Me.DateDuetoQA, vbMediumDate)) ' Begining Date of appointment
+                dteTempEnd = CDate(FormatDateTime(Me.DateDuetoQA, vbMediumDate))      ' Use to compute End Date of appointment
+
+                ' Add one day to dteEndDate so Outlook will set the number of days correctly
+                dteEndDate = DateSerial(Year(dteTempEnd + 1), Month(dteTempEnd + 1), Day(dteTempEnd + 1))
+
+                .Start = dteStartDate
+                .End = dteEndDate
+
+
+
+
+                ' Set the Start Property Value
+                .Start = FormatDateTime(Me.DateDuetoQA, vbMediumDate)
+
+
+                ' If there is no End Date on the Form just skip it
+                If Len(Me.DateDuetoQA & vbNullString) > 0 Then
+
+                        ' Set the End Property Value
+                        .End = FormatDateTime(Me.DateDuetoQA, vbMediumDate)
+
+
+                .Subject = Nz(Me.AreaManager) & ": BR for Lot " & Nz(Me.LotNumber, vbNullString) & " Due to QA for Initial Review."
+
+                End If
+
+                If Len(Me.DateDuetoQA & vbNullString) = 0 Then
+                    Dim timStartTime As Date
+                    Dim timEndTime As Date
+
+                    ' Format the Start Time and End Time
+                    timStartTime = FormatDateTime(Me.DateDuetoQA, vbMediumDate)
+                    timEndTime = FormatDateTime(Me.DateDuetoQA, vbMediumDate)
+
+
+
+            End If
+
+
+
+            ' Save the Appointment Item Properties
+            .Save
+        End With
+
+        ' Set chkAddedToOutlook to checked
+        Me.chkAddedtoOutlookMFGtoQA = True
+
+        ' Save the Current Record because we checked chkAddedToOutlook
+        If Me.Dirty Then Me.Dirty = False
+
+        ' Inform the user
+        MsgBox "New Outlook Appointment Has Been Added!", vbInformation
+    End If
+
+ExitHere:
+    ' Release Memory
+    Set olApptFldr = Nothing
+    Set olNS = Nothing
+    Set olAppt = Nothing
+    Set olApp = Nothing
+    Exit Sub
+
+ErrHandle:
+    MsgBox "Error " & Err.Number & vbCrLf & Err.Description _
+    & vbCrLf & "In procedure btnAddApptToOutlook_Click in Module Module1"
+    Resume ExitHere
+
+
+End Sub
+
+
+Private Sub DateCompletedInitialReview_AfterUpdate()
+[QAtoMFGTAT] = [DateCompletedInitialReview] - [QAReceivedDate]
+
+
+
+If [QAtoMFGTAT] > 7 Then
+[QAtoMFGDeliveryOnTime] = "NO"
+
+Else
+
+If [QAtoMFGTAT] < 7 Then
+[QAtoMFGDeliveryOnTime] = "YES"
+
+Else
+
+If [QAtoMFGTAT] = 7 Then
+[QAtoMFGDeliveryOnTime] = "YES"
+
+
+
+End If
+End If
+End If
+End Sub
+
+Private Sub DateCompletedInitialReview_BeforeUpdate(Cancel As Integer)
+
+If IsNull([QAReceivedDate]) Then
+MsgBox "You cannot enter this date until the QA Received Date has been entered."
+Cancel = True
+Me.Undo
+
+Else
+
+
+If [DateCompletedInitialReview] > Date Then
+MsgBox ("You cannot enter a date that is greater than today's date.")
+Cancel = True
+
+
+Else
+
+If [DateCompletedInitialReview] < [QAReceivedDate] Then
+MsgBox ("The Date Completed Initial Review cannot be prior to the QA Received Date.")
+Cancel = True
+
+
+End If
+End If
+End If
+End Sub
+
+Private Sub DateDuetoQA_AfterUpdate()
+[DateQASignedOff] = ""
+MsgBox "You must update the Final QA Sign Off Date."
+End Sub
+
+Private Sub DateQASignedOff_AfterUpdate()
+
+
+[TotalTAT] = [DateQASignedOff] - [MFGCommentResolution2Date]
+
+
+
+
+If [TotalTAT] > 5 Then
+[TotalDeliveryonTime] = "NO"
+
+Else
+
+If [TotalTAT] < 5 Then
+[TotalDeliveryonTime] = "YES"
+
+Else
+
+If [TotalTAT] = 5 Then
+[TotalDeliveryonTime] = "YES"
+
+End If
+End If
+End If
+End Sub
+
+Private Sub DateQASignedOff_BeforeUpdate(Cancel As Integer)
+
+If IsNull([DateReceivedfromClient]) Then
+MsgBox ("You must enter the Date Received from Client first.")
+Cancel = True
+Me.Undo
+
+Else
+
+
+
+If [DateQASignedOff] > Date Then
+MsgBox ("You cannot enter a date that is greater than today's date.")
+Cancel = True
+
+
+Else
+
+If [DateQASignedOff] < [DateReceivedfromClient] Then
+MsgBox ("The Date QA Signed Off cannot be prior to the Date Comments were Received from Client.")
+Cancel = True
+
+Else
+
+If IsNull([RFT]) Then
+MsgBox ("You cannot enter the Final QA Sign Off Date becase you have not identified the RFT Status. Hit the Esc key to back out of this entry and enter the RFT status.")
+Cancel = True
+
+
+Else
+
+If IsNull([DateCompletedInitialReview]) Then
+MsgBox ("You cannot enter the Final QA Sign Off Date becase you have not entered the Date Completed Initial Review.")
+Cancel = True
+Me.Undo
+
+End If
+End If
+End If
+End If
+End If
+
+
+End Sub
+
+Private Sub DateReviewInitiated_BeforeUpdate(Cancel As Integer)
+If IsNull([DateReviewInitiated]) Then
+MsgBox ("You must enter the QA Recieved Date.")
+Cancel = True
+
+
+Else
+
+If [DateReviewInitiated] > Date Then
+MsgBox ("You cannot enter a date that is greater than today's date for the QA Recieved Date.")
+Cancel = True
+
+Else
+
+If [DateReviewInitiated] > DateCompletedInitialReview Then
+MsgBox ("The QA Recieved Date cannot be after the Date you completed the initial review.")
+Cancel = True
+
+Else
+
+If IsNull([Accession]) Then
+MsgBox "You have not identified the Accession Number / Sample # for this record."
+Cancel = True
+Me.Undo
+
+Else
+
+If Form_QARecordEntry_Form.lstAccession = "" Then
+MsgBox "You have not identified the Accession Number / Sample # for this record."
+Cancel = True
+Me.Undo
+
+
+End If
+End If
+End If
+End If
+End If
+
+End Sub
+
+
+
+
+Private Sub DateReceivedfromClient_AfterUpdate()
+
+[ClientonTime] = [DateReceivedfromClient] - [QAtoClientDate]
+
+
+If [ClientonTime] > 7 Then
+[DeliveryfromClientonTime] = "NO"
+
+Else
+
+If [ClientonTime] < 7 Then
+[DeliveryfromClientonTime] = "YES"
+
+Else
+
+If [ClientonTime] = 7 Then
+[DeliveryfromClientonTime] = "YES"
+
+End If
+End If
+End If
+
+End Sub
+
+Private Sub DateReceivedfromClient_BeforeUpdate(Cancel As Integer)
+If IsNull([MFGCommentResolutionDate]) Then
+MsgBox "You cannot enter the Actual Date from Client until the Comment Resolution Date has been entered."
+Cancel = True
+Me.Undo
+
+Else
+
+
+If [DateReceivedfromClient] > Date Then
+MsgBox ("You cannot enter a date that is greater than today's date.")
+Cancel = True
+
+Else
+
+
+If [DateReceivedfromClient] < [MFGCommentResolutionDate] Then
+MsgBox "The Actual Date from Client cannot be prior to the MFG Comment Resolution Date."
+Cancel = True
+
+End If
+End If
+End If
+End Sub
+
+
+
+
+
+Private Sub Department_BeforeUpdate(Cancel As Integer)
+If [Department] = "MFG - CC3 Commercial" Or [Department] = "MFG - Gene Mediated" Or [Department] = "MFG - Non-Gene Mediated" Or [Department] = "MFG - Cell Banking" Or [Department] = "MFG - Viral Vector" Then
+Cancel = False
+
+Else
+
+
+
+MsgBox "You cannot use the " & Department & " department for a Manufacturing BR review."
+Cancel = True
+
+End If
+End Sub
+
+Private Sub Form_BeforeUpdate(Cancel As Integer)
+
+        If IsNull([LotNumber]) Then
+        MsgBox "You must enter the Lot Number in the field above prior to initiating a review."
+        Cancel = True
+        Me.Undo
+
+        Else
+
+        If IsNull([Site]) Then
+        MsgBox "The Site must be entered prior to saving this record."
+        Cancel = True
+
+        Else
+        If IsNull([OffTestDate]) And [Aborted] = True Then
+        Cancel = False
+
+
+        Else
+
+
+         If IsNull([OffTestDate]) And [Aborted] = False Then
+        MsgBox "The Harvest Date must be entered prior to saving this record."
+        Cancel = True
+
+        Else
+
+        If IsNull([QAReceivedDate]) And [Aborted] = True Then
+        Cancel = False
+
+        Else
+
+        If IsNull([QAReceivedDate]) And [Aborted] = False Then
+        MsgBox ("You must enter the QA Recieved Date.")
+        Cancel = True
+
+        Else
+
+        If IsNull([ReviewedBy]) Then
+        MsgBox "The QA Reviewer name must be entered prior to saving this record."
+        Cancel = True
+
+        Else
+
+        If IsNull([Accession]) Then
+        MsgBox ("You must enter an Accesion Number.  If there is no Accession associated, then enter the accession as 00-000000.")
+        Cancel = True
+
+        Else
+
+        If IsNull([BatchRecord]) Then
+        MsgBox ("You must select a Batch Record to complete this entry.")
+        Cancel = True
+
+        Else
+
+        If IsNull([BRPages]) Then
+        MsgBox ("You must enter the number of Batch Record Pages to complete this entry.")
+        Cancel = True
+
+        Else
+
+        If IsNull([Client]) Then
+        MsgBox ("You must select a Client to complete this entry.")
+        Cancel = True
+        Else
+
+        If IsNull([Department]) Then
+        MsgBox ("You must select the Department to complete this entry.")
+        Cancel = True
+
+        Else
+        If IsNull([AreaManager]) Then
+        MsgBox ("You must select the Area Manager to complete this entry.")
+        Cancel = True
+
+
+
+        Else
+
+        If [RFT] <> "" And IsNull([DateCompletedInitialReview]) Then
+        MsgBox ("You have selected a status for RFT.  You must enter the date the QA initial review was completed.")
+        Cancel = True
+
+        Else
+
+        If IsNull([RFT]) And [DateCompletedInitialReview] <> "" Then
+        MsgBox ("You must select the RFT status since you have entered the date for Initial Review Completion.")
+        Cancel = True
+
+        End If
+        End If
+        End If
+        End If
+        End If
+        End If
+        End If
+        End If
+        End If
+        End If
+        End If
+        End If
+        End If
+        End If
+        End If
+End Sub
+
+
+
+
+
+
+Private Sub Form_Error(DataErr As Integer, Response As Integer)
+If DataErr = 3022 Then
+   Response = acDataErrContinue
+   MsgBox "There is already an entry for Lot Number " & LotNumber & " ,Batch Record " & BatchRecord & ". The record will not be saved.", vbOKOnly, "Duplicate Entry Error"
+   Cancel = True
+   Me.Undo
+   Exit Sub
+End If
+If DataErr = 2169 Then
+   Response = acDataErrContinue
+   MsgBox "This form will close and the record will not be saved.", vbOKOnly, "Duplicate Entry Error"
+   Exit Sub
+End If
+If DataErr = 2237 Then
+   Response = acDataErrContinue
+   MsgBox "The information you are trying to enter is not available in the system.", vbOKOnly, "Not a Selectable Data Type"
+   Cancel = True
+
+End If
+
+
+   If DataErr = 2113 Then
+   Response = acDataErrContinue
+   MsgBox "You must enter a date in this field.", vbOKOnly, "Wrong Data Type Entered"
+   Cancel = True
+   End If
+
+
+   Const INPUTMASK_VIOLATION = 2279
+   If DataErr = INPUTMASK_VIOLATION Then
+      MsgBox "You did not enter the Accession correctly.  Accessions should be in the format of NN-NNNNNN."
+      Response = acDataErrContinue
+   End If
+
+End Sub
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Private Sub MFGCommentResolution2Date_AfterUpdate()
+[MFGCommentResolution2TAT] = [MFGCommentResolution2Date] - [DateReceivedfromClient]
+
+
+
+If [MFGCommentResolution2TAT] > 57 Then
+[MFGCommentResolution2OnTime] = "NO"
+
+Else
+
+If [MFGCommentResolution2TAT] < 7 Then
+[MFGCommentResolution2OnTime] = "YES"
+
+Else
+
+If [MFGCommentResolution2TAT] = 7 Then
+[MFGCommentResolution2OnTime] = "YES"
+
+End If
+End If
+End If
+End Sub
+
+Private Sub MFGCommentResolution2Date_BeforeUpdate(Cancel As Integer)
+If IsNull([DateReceivedfromClient]) Then
+MsgBox "You cannot enter this date until the Client Back to QA/MFG Date has been entered."
+Cancel = True
+Me.Undo
+
+Else
+
+If [MFGCommentResolution2Date] > Date Then
+MsgBox ("You cannot enter a date that is greater than today's date.")
+Cancel = True
+
+
+Else
+
+If [MFGCommentResolution2Date] < [DateReceivedfromClient] Then
+MsgBox ("The 2nd MFG Comment Resolution Date cannot be prior to the Client Back to QA/MFG Date.")
+Cancel = True
+
+
+End If
+End If
+End If
+
+End Sub
+
+Private Sub MFGCommentResolutionDate_AfterUpdate()
+[MFGCommentREsolutionTAT] = [MFGCommentResolutionDate] - [DateCompletedInitialReview]
+
+
+
+If [MFGCommentREsolutionTAT] > 7 Then
+[MFGCommentResolutionOnTime] = "NO"
+
+Else
+
+If [MFGCommentREsolutionTAT] < 7 Then
+[MFGCommentResolutionOnTime] = "YES"
+
+Else
+
+If [MFGCommentREsolutionTAT] = 7 Then
+[MFGCommentResolutionOnTime] = "YES"
+
+End If
+End If
+End If
+
+End Sub
+
+Private Sub MFGCommentResolutionDate_BeforeUpdate(Cancel As Integer)
+
+If IsNull([DateCompletedInitialReview]) Then
+MsgBox "You cannot enter this date until the QA Initial Review Date has been entered."
+Cancel = True
+Me.Undo
+
+Else
+
+If [MFGCommentResolutionDate] > Date Then
+MsgBox ("You cannot enter a date that is greater than today's date.")
+Cancel = True
+
+
+Else
+
+If [MFGCommentResolutionDate] < [DateCompletedInitialReview] Then
+MsgBox ("The MFG 1st Comment Resolution Date Date cannot be prior to the QA Initial Review Completion Date.")
+Cancel = True
+
+
+End If
+End If
+End If
+End Sub
+
+Private Sub OffTestDate_AfterUpdate()
+[DateDuetoQA] = [OffTestDate] + 14
+[QADueToMFG] = [OffTestDate] + 21
+[MFGCommentResolutionDue] = [OffTestDate] + 28
+[DateDuetoClient] = [OffTestDate] + 31
+[DateDuefromClient] = [OffTestDate] + 38
+[MFGCommentResolution2Due] = [OffTestDate] + 45
+[TotalProjectDue] = [OffTestDate] + 50
+
+[OnTimeDeliveryTAT] = [QAReceivedDate] - [OffTestDate]
+[QAtoMFGTAT] = [DateCompletedInitialReview] - [QAReceivedDate]
+[MFGCommentREsolutionTAT] = [MFGCommentResolutionDate] - [DateCompletedInitialReview]
+[OnTimeClientTAT] = [QAtoClientDate] - [MFGCommentResolutionDate]
+[ClientonTime] = [DateReceivedfromClient] - [QAtoClientDate]
+[MFGCommentResolution2TAT] = [MFGCommentResolution2Date] - [DateReceivedfromClient]
+[TotalTAT] = [DateQASignedOff] - [MFGCommentResolution2Date]
+
+If [QAtoMFGTAT] > 7 Then
+[QAtoMFGDeliveryOnTime] = "NO"
+
+Else
+
+If [QAtoMFGTAT] < 7 Then
+[QAtoMFGDeliveryOnTime] = "YES"
+
+Else
+
+If [QAtoMFGTAT] = 7 Then
+[QAtoMFGDeliveryOnTime] = "YES"
+
+If [OnTimeDeliveryTAT] > 14 Then
+[DeliveryonTime] = "NO"
+
+Else
+
+If [OnTimeDeliveryTAT] < 14 Then
+[DeliveryonTime] = "YES"
+
+Else
+
+If [OnTimeDeliveryTAT] = 14 Then
+[DeliveryonTime] = "YES"
+
+Else
+
+If [OnTimeClientTAT] > 3 Then
+[DeliverytoClientonTime] = "NO"
+
+Else
+
+If [OnTimeClientTAT] < 3 Then
+[DeliverytoClientonTime] = "YES"
+
+Else
+
+If [OnTimeClientTAT] = 3 Then
+[DeliverytoClientonTime] = "YES"
+
+Else
+
+If [MFGCommentREsolutionTAT] > 7 Then
+[MFGCommentResolutionOnTime] = "NO"
+
+Else
+
+If [MFGCommentREsolutionTAT] < 7 Then
+[MFGCommentResolutionOnTime] = "YES"
+
+Else
+
+If [MFGCommentREsolutionTAT] = 7 Then
+[MFGCommentResolutionOnTime] = "YES"
+
+Else
+
+If [ClientonTime] > 7 Then
+[DeliveryfromClientonTime] = "NO"
+
+Else
+
+If [ClientonTime] < 7 Then
+[DeliveryfromClientonTime] = "YES"
+
+Else
+
+If [ClientonTime] = 7 Then
+[DeliveryfromClientonTime] = "YES"
+
+Else
+
+If [MFGCommentResolution2TAT] > 7 Then
+[MFGCommentResolutionOnTime] = "NO"
+
+Else
+
+If [MFGCommentResolution2TAT] < 7 Then
+[MFGCommentResolutionOnTime] = "YES"
+
+Else
+
+If [MFGCommentResolution2TAT] = 7 Then
+[MFGCommentResolutionOnTime] = "YES"
+
+Else
+
+If [TotalTAT] = 5 Then
+[TotalDeliveryonTime] = "YES"
+
+
+If [TotalTAT] > 5 Then
+[TotalDeliveryonTime] = "NO"
+
+Else
+
+If [TotalTAT] < 5 Then
+[TotalDeliveryonTime] = "YES"
+
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End Sub
+
+Private Sub OffTestDate_BeforeUpdate(Cancel As Integer)
+If [OffTestDate] > Date Then
+MsgBox "The Harvest Date cannot be greater than today's date."
+Cancel = True
+
+Else
+
+If [OffTestDate] > [QAReceivedDate] Then
+MsgBox "The Harvest Date cannot be greater than the QA Received Date."
+Cancel = True
+
+End If
+End If
+
+End Sub
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Private Sub OffTestDate_Change()
+[DateDuetoQA] = [OffTestDate] + 14
+[QADueToMFG] = [OffTestDate] + 21
+[MFGCommentResolutionDue] = [OffTestDate] + 28
+[DateDuetoClient] = [OffTestDate] + 31
+[DateDuefromClient] = [OffTestDate] + 38
+[MFGCommentResolution2Due] = [OffTestDate] + 45
+[TotalProjectDue] = [OffTestDate] + 50
+
+[OnTimeDeliveryTAT] = [QAReceivedDate] - [OffTestDate]
+[QAtoMFGTAT] = [DateCompletedInitialReview] - [QAReceivedDate]
+[MFGCommentREsolutionTAT] = [MFGCommentResolutionDate] - [DateCompletedInitialReview]
+[OnTimeClientTAT] = [QAtoClientDate] - [MFGCommentResolutionDate]
+[ClientonTime] = [DateReceivedfromClient] - [QAtoClientDate]
+[MFGCommentResolution2TAT] = [MFGCommentResolution2Date] - [DateReceivedfromClient]
+[TotalTAT] = [DateQASignedOff] - [MFGCommentResolution2Date]
+
+
+If [QAtoMFGTAT] > 7 Then
+[QAtoMFGDeliveryOnTime] = "NO"
+
+Else
+
+If [QAtoMFGTAT] < 7 Then
+[QAtoMFGDeliveryOnTime] = "YES"
+
+Else
+
+If [QAtoMFGTAT] = 7 Then
+[QAtoMFGDeliveryOnTime] = "YES"
+
+If [OnTimeDeliveryTAT] > 14 Then
+[DeliveryonTime] = "NO"
+
+Else
+
+If [OnTimeDeliveryTAT] < 14 Then
+[DeliveryonTime] = "YES"
+
+Else
+
+If [OnTimeDeliveryTAT] = 14 Then
+[DeliveryonTime] = "YES"
+
+Else
+
+If [OnTimeClientTAT] > 3 Then
+[DeliverytoClientonTime] = "NO"
+
+Else
+
+If [OnTimeClientTAT] < 3 Then
+[DeliverytoClientonTime] = "YES"
+
+Else
+
+If [OnTimeClientTAT] = 3 Then
+[DeliverytoClientonTime] = "YES"
+
+Else
+
+If [MFGCommentREsolutionTAT] > 7 Then
+[MFGCommentResolutionOnTime] = "NO"
+
+Else
+
+If [MFGCommentREsolutionTAT] < 7 Then
+[MFGCommentResolutionOnTime] = "YES"
+
+Else
+
+If [MFGCommentREsolutionTAT] = 7 Then
+[MFGCommentResolutionOnTime] = "YES"
+
+Else
+
+If [ClientonTime] > 7 Then
+[DeliveryfromClientonTime] = "NO"
+
+Else
+
+If [ClientonTime] < 7 Then
+[DeliveryfromClientonTime] = "YES"
+
+Else
+
+If [ClientonTime] = 7 Then
+[DeliveryfromClientonTime] = "YES"
+
+Else
+
+If [MFGCommentResolution2TAT] > 7 Then
+[MFGCommentResolutionOnTime] = "NO"
+
+Else
+
+If [MFGCommentResolution2TAT] < 7 Then
+[MFGCommentResolutionOnTime] = "YES"
+
+Else
+
+If [MFGCommentResolution2TAT] = 7 Then
+[MFGCommentResolutionOnTime] = "YES"
+
+Else
+
+If [TotalTAT] = 5 Then
+[TotalDeliveryonTime] = "YES"
+
+
+If [TotalTAT] > 5 Then
+[TotalDeliveryonTime] = "NO"
+
+Else
+
+If [TotalTAT] < 5 Then
+[TotalDeliveryonTime] = "YES"
+
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+End If
+
+End Sub
+
+Private Sub QAReceivedDate_AfterUpdate()
+
+
+[OnTimeDeliveryTAT] = [QAReceivedDate] - [OffTestDate]
+
+If [OnTimeDeliveryTAT] > 14 Then
+[DeliveryonTime] = "NO"
+
+Else
+
+If [OnTimeDeliveryTAT] < 14 Then
+[DeliveryonTime] = "YES"
+
+Else
+
+If [OnTimeDeliveryTAT] = 14 Then
+[DeliveryonTime] = "YES"
+
+End If
+End If
+End If
+
+
+
+End Sub
+
+Private Sub QAReceiveddate_BeforeUpdate(Cancel As Integer)
+
+If IsNull([OffTestDate]) Then
+MsgBox "You must enter the Harvest Date prior to entering the QA Received Date."
+Cancel = True
+Me.Undo
+
+Else
+
+If [QAReceivedDate] > Date Then
+MsgBox ("You cannot enter a date that is greater than today's date.")
+Cancel = True
+
+Else
+
+If [QAReceivedDate] < [OffTestDate] Then
+MsgBox "The QA Received Date cannot be prior to the Harvest Date."
+Cancel = True
+
+End If
+End If
+End If
+End Sub
+
+
+
+
+
+Private Sub QAtoClientDate_AfterUpdate()
+[OnTimeClientTAT] = [QAtoClientDate] - [MFGCommentResolutionDate]
+
+
+
+If [OnTimeClientTAT] > 3 Then
+[DeliverytoClientonTime] = "NO"
+
+Else
+
+If [OnTimeClientTAT] < 3 Then
+[DeliverytoClientonTime] = "YES"
+
+Else
+
+If [OnTimeClientTAT] = 3 Then
+[DeliverytoClientonTime] = "YES"
+
+
+
+End If
+End If
+End If
+End Sub
+
+Private Sub QAtoClientDate_BeforeUpdate(Cancel As Integer)
+If IsNull([MFGCommentResolutionDate]) Then
+MsgBox "You cannot enter this date until the 1st MFG Comment Resolution Date has been entered."
+Cancel = True
+Me.Undo
+
+Else
+
+
+If [QAtoClientDate] > Date Then
+MsgBox ("You cannot enter a date that is greater than today's date.")
+Cancel = True
+
+
+Else
+
+If [QAtoClientDate] < [MFGCommentResolutionDate] Then
+MsgBox ("The Date to Client cannot be prior to the Date the 1st MFG Comment Resolution Date.")
+Cancel = True
+
+
+End If
+End If
+End If
+End Sub
+
+Private Sub RFT_BeforeUpdate(Cancel As Integer)
+If IsNull([RFT]) And DateQASignedOff <> "" Then
+MsgBox ("A QA sign off date exists for this record.  You must select Yes or No for RFT or delete the sign off date prior to removing the RFT status.")
+Cancel = True
+Me.Undo
+
+
+End If
+End Sub

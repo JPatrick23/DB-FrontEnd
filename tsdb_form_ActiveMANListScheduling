@@ -1,0 +1,23 @@
+Option Compare Database
+
+Private Sub Command18_Click()
+DoCmd.OpenForm "UpdateEmployeeStatus_Form"
+End Sub
+
+Private Sub Command49_Click()
+On Error GoTo Command49_Click_Err
+    DoCmd.OutputTo acQuery, "ActiveMANOwner_Query", "MicrosoftExcel(*.xls)"
+    Exit Sub
+
+Command49_Click_Err:
+
+    If Err.Number = 2501 Then
+        MsgBox "Cancelled.", vbOKOnly
+    Else
+        ' If you want to do something about other errors...
+    End If
+End Sub
+
+Private Sub Command8_Click()
+DoCmd.Quit
+End Sub
